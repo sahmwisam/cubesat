@@ -1,0 +1,68 @@
+
+import processing.serial.*;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+Serial myPort;
+String data="";
+int roll, pitch, yaw, temp;
+String startbit, endbit;
+void setup() {
+ size (1924, 1055, P3D);
+ myPort = new Serial(this, "COM3", 250000); //
+starts the serial communicationz
+ myPort.bufferUntil('\n');
+}
+void draw() {
+ translate(200, 100, 0);
+ background(255, 255, 255);
+ textSize(30);
+ fill(250, 0, 0);
+ text("Pitch: " + pitch + " Roll: " + roll +" Yaw:
+" + yaw + " Temp: "+temp+" °C", 120, 100, 265);
+ translate(750, 400, 0);
+ // Rotate the object
+ rotateX(radians(-pitch));
+ rotateZ(radians(roll));
+ rotateY(radians(yaw));
+ // 3D 0bject
+textSize(30);
+ fill(0, 0, 255);
+ box (400, 400, 400); // Draw box
+ textSize(50);
+ fill(255, 165, 0);
+ text("CubeSat", -90, 25, 210);
+ fill(0, 0, 0);
+ translate(-310, -190, 0);
+ box(340, 5, 45);
+ translate(610, 0, 0);
+ box(340, 5, 45);
+ //delay(10);
+ //println("ypr:\t" + angleX + "\t" + angleY); // Print
+the values to check whether we are getting proper
+values
+}
+// Read data from the Serial Port
+void serialEvent (Serial myPort) {
+ try {
+ // reads the data from the Serial Port up to the
+character '.' and puts it into the String variable "data".
+ data = myPort.readStringUntil('\n');
+ // if you got any bytes other than the linefeed:
+ if (data != null) {
+ data = trim(data);
+ // split the string at "/"
+ String items[] = split(data, '/');
+ if (items.length > 1) {
+ //--- Roll,Pitch in degrees
+ // startbit = items[0];
+ temp = int(items[0]);
+ pitch = int(items[1]);
+ roll= int(items[2]);
+ yaw = int(items[3]);
+ // endbit = items[4];
+ }
+ }
+ }
+ catch(RuntimeException e) {
+ e.printStackTrace();
+ }
