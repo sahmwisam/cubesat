@@ -1,0 +1,54 @@
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+#include <MPU6050_tockn.h>
+#include <Wire.h>
+#include <VirtualWire.h>
+#define DHTPIN A2
+#define DHTTYPE DHT11
+const int led_pin = 13;
+const int transmit_pin = 12;
+int mosfet = 5;
+DHT_Unified dht(DHTPIN, DHTTYPE);
+MPU6050 mpu6050(Wire);
+void setup() {
+ Serial.begin(9600);
+ Wire.begin();
+ // Initialize device.
+ dht.begin();
+ mpu6050.begin();
+ mpu6050.calcGyroOffsets();
+ vw_set_tx_pin(transmit_pin);
+ vw_setup(6000); // Bits per sec
+ pinMode(mosfet, OUTPUT);
+ pinMode(led_pin, OUTPUT);
+ delay(10000);
+ digitalWrite(mosfet, HIGH);
+ delay(1000);
+ digitalWrite(mosfet, LOW);
+}
+void loop() {
+ sensors_event_t event;
+ dht.temperature().getEvent(&event);
+ mpu6050.update();
+ if (isnan(event.temperature)) {
+ Serial.println(F("Error reading temperature!"));
+} else {
+ String datVal = String(int(event.temperature)) +
+"/" + String(int(mpu6050.getAngleX())) + "/" +
+String(int(mpu6050.getAngleY())) + "/" +
+String(int(mpu6050.getAngleZ())) + "/"; //+"/1111";
+ //datVal.trim();
+ char msg[VW_MAX_PAYLOAD];
+ datVal.toCharArray(msg,
+VW_MAX_PAYLOAD);
+ // digitalWrite(led_pin, HIGH); // Flash a light to
+show transmitting
+ vw_send((uint8_t *)msg,
+VW_MAX_PAYLOAD);
+ vw_wait_tx(); // Wait until the whole message is
+gone
+ // digitalWrite(led_pin, LOW);
+ Serial.println("Data sent: " + datVal);
+ }
+}
