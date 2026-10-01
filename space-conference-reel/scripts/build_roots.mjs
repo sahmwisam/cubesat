@@ -2,7 +2,7 @@
 // Generate the root composition (index.html) from src/timing.js (+ src/audio-plan.js)
 // for one cut, plus build/timeline-<label>.json for BOTH cuts (audio build input).
 //   node scripts/build_roots.mjs                 -> index.html = "compact" (20.00 s, default)
-//   node scripts/build_roots.mjs --variant full  -> index.html = "full" (VO untouched)
+//   node scripts/build_roots.mjs --variant full  -> index.html = "full" (VO at natural pace)
 // HyperFrames wants exactly one root entry, so the cut is switched by regenerating.
 import fs from "node:fs";
 import path from "node:path";
@@ -47,17 +47,14 @@ function rootHtml(variant) {
         data-start="${f3(s.hostStart)}" data-duration="${f3(s.hostDuration)}" data-track-index="${i + 1}" style="z-index:${10 + i}"></div>`;
   }).join("\n");
 
-  let vo;
-  if (variant === "full") {
-    vo = `      <audio id="vo-full" data-audio-group="voiceover" src="assets/audio/voiceover.m4a" data-start="0" data-duration="${f3(REEL.TIMING_DATA.vo.duration)}" data-volume="1" data-track-index="20"></audio>`;
-  } else {
-    vo = T.segs
-      .map(
-        (s, i) =>
-          `      <audio id="vo-${s.id}" data-audio-group="voiceover" src="assets/audio/voiceover.m4a" data-start="${f3(s.start)}" data-duration="${f3(s.duration)}" data-media-start="${f3(s.voStart)}" data-playback-rate="${s.rate.toFixed(4)}" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="${20 + (i % 2)}"></audio>`
-      )
-      .join("\n");
-  }
+  // one clip per VO segment (cut at the take's natural pauses); rate 1 in the full cut
+  const voFile = REEL.TIMING_DATA.vo.file;
+  const vo = T.segs
+    .map(
+      (s, i) =>
+        `      <audio id="vo-${s.id}" data-audio-group="voiceover" src="${voFile}" data-start="${f3(s.start)}" data-duration="${f3(s.duration)}" data-media-start="${f3(s.voStart)}"${s.rate === 1 ? "" : ` data-playback-rate="${s.rate.toFixed(4)}"`} data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="${20 + (i % 2)}"></audio>`
+    )
+    .join("\n");
   const plan = REEL.audioPlan ? REEL.audioPlan.mix : { music: 0.5, sfx: 0.7 };
   return `<!doctype html>
 <!--
@@ -78,7 +75,7 @@ function rootHtml(variant) {
     <script src="src/utils/prng.js"></script>
     <script src="src/utils/anim.js"></script>
     <script src="src/timing.js"></script>
-    <script src="src/components/astronaut.js"></script>
+    <script src="src/components/engineer.js"></script>
     <script src="src/components/earth.js"></script>
     <script src="src/components/satellite.js"></script>
     <script src="src/components/iraq-flag.js"></script>
@@ -105,9 +102,10 @@ ${hosts}
       <div id="el-fx" class="scene-host" data-composition-id="fx-overlay" data-composition-src="compositions/fx-overlay.html"
         data-start="0" data-duration="${dur}" data-track-index="9" style="z-index:100"></div>
 
-      <!-- Voice-over: the ORIGINAL file, never modified on disk. The bus applies a
-           transparent broadcast chain (rumble cut, gentle compression, level,
-           peak ceiling) so the voice sits at ~-16.5 LUFS, well above the score. -->
+      <!-- Voice-over: the ElevenLabs take (assets/audio/voiceover.wav), never modified
+           on disk — clips are cut at its natural pauses. The bus applies a transparent
+           broadcast chain (rumble cut, gentle compression, level, peak ceiling) so the
+           voice sits well above the score. -->
       <hf-audio-group id="voiceover" data-label="Voiceover" data-volume="${plan.vo === undefined ? 1 : plan.vo}"
         data-fx-chain="${VO_CHAIN}"></hf-audio-group>
 ${vo}

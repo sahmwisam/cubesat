@@ -8,7 +8,7 @@
          and a satellite passes; the camera keeps pushing forward. The VO's own
          closing line is the main text («المستقبل» emphasised), then the clean
          lockup: conference title → Iraqi tricolour hairline + union name, with a
-         light sweep and a visor glint. -->
+         light sweep and a glint on her glasses. -->
   </head>
   <body>
     <template id="scene-06-final-template">
@@ -82,13 +82,13 @@
           const q = (s) => document.querySelector(s);
           const tl = gsap.timeline({ paused: true });
 
-          q("#s6-char").innerHTML = REEL.astronaut.build("s6a", {});
-          const rig = REEL.astronaut.rig(q("#s6a"), "s6a");
+          q("#s6-char").innerHTML = REEL.engineer.build("s6a", {});
+          const rig = REEL.engineer.rig(q("#s6a"), "s6a");
           const earth = REEL.earth.create(q("#s6-earth"), { id: "s6e", r: 1450, dots: true });
           q("#s6-sat").innerHTML = REEL.satellite.build("s6s");
           q("#s6-hair").innerHTML = REEL.iraqFlag.hairline(160);
 
-          // ---- per-frame: pose, Earth spin, satellite pass, visor glint position
+          // ---- per-frame: pose, Earth spin, satellite pass
           const P = { invite: 0 };
           const V = gsap.timeline({ paused: true });
           const pose = { headYaw: -0.12, headTilt: -4, bodyYaw: -0.05, armR: { sh: 14, el: -12, fs: 0.9 }, armL: { sh: -16, el: 14, fs: 0.92 }, legR: 3.5, legL: -2, kneeR: -2, lights: 1 };
@@ -103,7 +103,7 @@
             pose.armL.sh = -16 - Math.sin(t * 1.1 + 1) * 1.2;
             pose.headTilt = -4 + Math.sin(t * 0.8) * 0.8;
             rig.set(pose);
-            q("#s6-char").style.transform = `translate(0px, ${(Math.sin(t * 1.6) * 6).toFixed(2)}px)`;
+            q("#s6-char").style.transform = `translate(0px, ${(Math.sin(t * 1.5) * 2.5).toFixed(2)}px)`;
             earth.update({ lambda: -30 - t * 2.2, phi: -42, gamma: -14, pulse: (t * 0.7) % 1, marker: 1 });
             // satellite glides in from the right and settles low over the horizon,
             // clear of the engineer and the lockup, with a light trail
@@ -156,11 +156,15 @@
           // the closing line steps up a little to make room for the lockup
           tl.to("#s6-b", { y: -18, scale: 0.9, duration: d(0.5), ease: "power2.out", transformOrigin: "50% 0%" }, lk);
 
-          // ---- final light: visor glint near the end
-          const helmet = { x: 330 + 300 * 0.72 - 60, y: 846 + 150 * 0.72 };
-          tl.set("#s6-glint", { x: helmet.x, y: helmet.y }, 0);
-          tl.fromTo("#s6-glint", { opacity: 0, scale: 0.2, rotation: -20 }, { opacity: 1, scale: 1, rotation: 25, duration: d(0.35), ease: "power2.out", immediateRender: false }, dur - d(0.95));
-          tl.to("#s6-glint", { opacity: 0, scale: 0.4, rotation: 45, duration: d(0.4), ease: "power2.in" }, dur - d(0.6));
+          // ---- final light: a glint on her glasses near the end
+          // (lens corner in viewBox coords, rotated with the head tilt about the neck pivot 300,300)
+          const G = REEL.engineer.glint, ga = (pose.headTilt * Math.PI) / 180;
+          const gx = 300 + (G.x - 300) * Math.cos(ga) - (G.y - 300) * Math.sin(ga) + pose.headYaw * 12;
+          const gy = 300 + (G.x - 300) * Math.sin(ga) + (G.y - 300) * Math.cos(ga);
+          tl.set("#s6-glint", { x: 330 + gx * 0.72, y: 846 + gy * 0.72 }, 0);
+          // sized for a lens, not a helmet
+          tl.fromTo("#s6-glint", { opacity: 0, scale: 0.1, rotation: -20 }, { opacity: 1, scale: 0.55, rotation: 25, duration: d(0.35), ease: "power2.out", immediateRender: false }, dur - d(0.95));
+          tl.to("#s6-glint", { opacity: 0, scale: 0.2, rotation: 45, duration: d(0.4), ease: "power2.in" }, dur - d(0.6));
 
           window.__timelines[ID] = tl;
         })();

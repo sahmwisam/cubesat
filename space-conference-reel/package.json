@@ -9,13 +9,13 @@
     "build:audio": "node scripts/build_roots.mjs && python3 scripts/build_audio.py",
     "cut:20s": "node scripts/build_roots.mjs --variant compact",
     "cut:full": "node scripts/build_roots.mjs --variant full",
-    "dev": "npx --yes hyperframes@0.8.103 preview",
-    "check": "npx --yes hyperframes@0.8.103 check",
-    "lint": "npx --yes hyperframes@0.8.103 lint",
+    "dev": "npx --yes hyperframes@0.8.105 preview",
+    "check": "npx --yes hyperframes@0.8.105 check",
+    "lint": "npx --yes hyperframes@0.8.105 lint",
     "render": "npm run render:20s",
-    "render:20s": "node scripts/build_roots.mjs --variant compact && npx --yes hyperframes@0.8.103 render -o output/space-conference-reel_20s.mp4 -f 30 --video-bitrate 14M && python3 scripts/master_audio.py output/space-conference-reel_20s.mp4 && python3 scripts/qa.py output/space-conference-reel_20s.mp4 --expect 20",
-    "render:full": "node scripts/build_roots.mjs --variant full && npx --yes hyperframes@0.8.103 render -o output/space-conference-reel_full-vo.mp4 -f 30 --video-bitrate 14M && python3 scripts/master_audio.py output/space-conference-reel_full-vo.mp4 && python3 scripts/qa.py output/space-conference-reel_full-vo.mp4 --expect 26; node scripts/build_roots.mjs --variant compact",
-    "publish": "npx --yes hyperframes@0.8.103 publish"
+    "render:20s": "node scripts/build_roots.mjs --variant compact && npx --yes hyperframes@0.8.105 render -o output/space-conference-reel_20s.mp4 -f 30 --video-bitrate 14M && python3 scripts/master_audio.py output/space-conference-reel_20s.mp4 && python3 scripts/qa.py output/space-conference-reel_20s.mp4 --expect 20",
+    "render:full": "node scripts/build_roots.mjs --variant full && npx --yes hyperframes@0.8.105 render -o output/space-conference-reel_full-vo.mp4 -f 30 --video-bitrate 14M && python3 scripts/master_audio.py output/space-conference-reel_full-vo.mp4 && python3 scripts/qa.py output/space-conference-reel_full-vo.mp4 --expect 27.8; node scripts/build_roots.mjs --variant compact",
+    "publish": "npx --yes hyperframes@0.8.105 publish"
   },
   "devDependencies": {
     "d3-array": "^3.2.4",

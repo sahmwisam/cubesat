@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <!-- SCENE 01 — INTRO
          VO: «رحلة جديدة تبدأ من هنا. المؤتمر السنوي لتكنولوجيا الفضاء والأقمار الاصطناعية»
-         Dark space → the engineer rises as a rim-lit silhouette → lights on at «المؤتمر»
+         Dark space → the engineer (an Iraqi woman space engineer) rises as a rim-lit silhouette → lights on at «المؤتمر»
          → word-synced cinematic title → union signature → push-through exit. -->
   </head>
   <body>
@@ -68,8 +68,8 @@
           const q = (s) => document.querySelector(s);
 
           // --- build components (same character design as every scene)
-          q("#s1-char-svg").innerHTML = REEL.astronaut.build("s1a", {});
-          const rig = REEL.astronaut.rig(q("#s1a"), "s1a");
+          q("#s1-char-svg").innerHTML = REEL.engineer.build("s1a", {});
+          const rig = REEL.engineer.rig(q("#s1a"), "s1a");
           const earth = REEL.earth.create(q("#s1-earth"), { id: "s1e", r: 1500, dots: true });
           q("#s1-hair").innerHTML = REEL.iraqFlag.hairline(150);
 
@@ -98,7 +98,7 @@
           const V = gsap.timeline({ paused: true });
           A.clock(tl, S.hostDuration, (t) => {
             V.totalTime(t, true);
-            const fy = Math.sin(t * 1.9) * 7, fr = Math.sin(t * 1.3 + 0.6) * 0.7;
+            const fy = Math.sin(t * 1.5) * 2.5, fr = Math.sin(t * 1.1 + 0.6) * 0.2; // idle breathing sway
             q("#s1-char-float").style.transform = `translate(0px, ${fy.toFixed(2)}px) rotate(${fr.toFixed(3)}deg)`;
             pose.lights = P.lights;
             pose.headTilt = -2 - 3 * P.look;
