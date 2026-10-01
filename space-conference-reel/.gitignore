@@ -1,0 +1,17 @@
+# dependencies / generated
+node_modules/
+build/
+snapshots/
+renders/
+.hyperframes/
+output/qa/
+
+# DIN Next LT Arabic is a commercial Linotype font supplied by the client.
+# It is NOT redistributed in this public repo — place it here before rendering:
+#   assets/fonts/DINNextLTArabic-Regular.ttf
+assets/fonts/*.ttf
+assets/fonts/*.otf
+
+# python caches
+__pycache__/
+*.pyc

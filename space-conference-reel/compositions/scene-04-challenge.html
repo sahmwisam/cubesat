@@ -1,0 +1,218 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- SCENE 04 — THE CHALLENGE
+         VO: «قبل انطلاق المؤتمر، نفتح المجال أمام المبتكرين، من خلال تحدٍّ تقني»
+         The same engineer (3/4 view, waist-up) works a holographic mission panel:
+         rotating CubeSat wireframe, code typing, telemetry, a countdown ring, a
+         lock that opens on «نفتح المجال». «تحدٍّ تقني» lands as the headline.
+         Enters with a HUD scan line; exits by expanding the panel (→ website). -->
+  </head>
+  <body>
+    <template id="scene-04-challenge-template">
+      <style>
+        [data-composition-id="scene-04-challenge"] { position: absolute; inset: 0; overflow: hidden; }
+        #s4-all { position: absolute; inset: 0; }
+        #s4-dim { position: absolute; inset: 0; background: radial-gradient(120% 70% at 30% 55%, rgba(10, 30, 72, 0.55), rgba(2, 4, 10, 0.82) 70%); }
+        #s4-floor { position: absolute; left: -200px; top: 1380px; width: 1480px; height: 700px; opacity: 0.5;
+          background-image: linear-gradient(rgba(63, 224, 255, 0.35) 2px, transparent 2px), linear-gradient(90deg, rgba(63, 224, 255, 0.35) 2px, transparent 2px);
+          background-size: 90px 90px; transform-origin: 50% 0%; mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)); -webkit-mask-image: linear-gradient(180deg, #000, transparent); }
+        #s4-char { position: absolute; left: 430px; top: 760px; width: 672px; height: 1680px; }
+        #s4-char svg { width: 100%; height: 100%; display: block; overflow: visible; }
+        #s4-panel { position: absolute; left: 50px; top: 690px; width: 560px; height: 690px; }
+        #s4-glass { position: absolute; inset: 0; border-radius: 26px; overflow: hidden;
+          background: linear-gradient(160deg, rgba(20, 70, 150, 0.42), rgba(6, 20, 52, 0.62) 55%, rgba(3, 10, 28, 0.72));
+          border: 2px solid rgba(143, 240, 255, 0.7); box-shadow: 0 0 40px rgba(63, 224, 255, 0.35), inset 0 0 40px rgba(63, 224, 255, 0.12); }
+        #s4-glass .hdr { position: absolute; left: 26px; right: 26px; top: 20px; display: flex; justify-content: space-between; align-items: center; direction: ltr; font-size: 21px; letter-spacing: 0.24em; color: #8ff0ff; }
+        #s4-glass .hdr b { font-weight: 400; color: #fff; }
+        #s4-led { width: 12px; height: 12px; border-radius: 50%; background: #7cffb2; box-shadow: 0 0 10px #7cffb2; display: inline-block; margin-right: 10px; vertical-align: middle; }
+        #s4-wire { position: absolute; left: 30px; top: 70px; width: 330px; height: 300px; overflow: visible; }
+        #s4-ring { position: absolute; right: 22px; top: 76px; width: 170px; height: 170px; overflow: visible; }
+        #s4-lock { position: absolute; right: 79px; top: 132px; width: 56px; height: 60px; overflow: visible; }
+        #s4-bars { position: absolute; right: 30px; top: 282px; width: 160px; height: 96px; display: flex; align-items: flex-end; gap: 10px; }
+        #s4-bars i { display: block; flex: 1; height: 100%; background: linear-gradient(180deg, #8ff0ff, #2e7bff); border-radius: 3px; transform-origin: 50% 100%; box-shadow: 0 0 10px rgba(63, 224, 255, 0.6); }
+        #s4-code { position: absolute; left: 30px; right: 30px; top: 400px; height: 210px; direction: ltr; text-align: left; font-size: 25px; line-height: 1.6; color: #cfeeff; letter-spacing: 0.04em; }
+        #s4-code .c { color: #8ff0ff; }
+        #s4-code .ok { color: #7cffb2; }
+        #s4-access { position: absolute; left: 26px; right: 26px; bottom: 22px; height: 54px; border-radius: 12px; display: flex; align-items: center; justify-content: center; direction: ltr;
+          font-size: 23px; letter-spacing: 0.3em; color: #02040a; background: linear-gradient(90deg, #8ff0ff, #3fe0ff); box-shadow: 0 0 24px rgba(63, 224, 255, 0.7); }
+        #s4-ripple { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 3px solid #bff6ff; opacity: 0; }
+        #s4-scan { position: absolute; left: 0; width: 1080px; height: 4px; top: 0; background: linear-gradient(90deg, transparent, #bff6ff 20%, #ffffff 50%, #bff6ff 80%, transparent);
+          box-shadow: 0 0 24px 8px rgba(63, 224, 255, 0.55); opacity: 0; }
+        #s4-text { position: absolute; left: 60px; right: 60px; top: 268px; height: 400px; text-align: center; }
+        #s4-sub { position: absolute; left: 0; right: 0; top: 0; font-size: 66px; line-height: 1.25; }
+        #s4-sub2 { position: absolute; left: 0; right: 0; top: 0; font-size: 66px; line-height: 1.25; }
+        #s4-sub .w, #s4-sub2 .w { display: inline-block; }
+        #s4-pre { margin-top: 10px; font-size: 24px; letter-spacing: 0.34em; color: #8ff0ff; direction: ltr; }
+        #s4-head { position: absolute; left: 0; right: 0; top: 96px; font-size: 150px; line-height: 1.1; }
+        #s4-head-en { position: absolute; left: 0; right: 0; top: 282px; font-size: 27px; letter-spacing: 0.38em; color: #8ff0ff; direction: ltr; text-align: center; }
+      </style>
+
+      <div data-composition-id="scene-04-challenge" data-width="1080" data-height="1920">
+        <div id="s4-all">
+          <div id="s4-dim"></div>
+          <div id="s4-floor"></div>
+          <div id="s4-char"></div>
+          <div id="s4-panel">
+            <div id="s4-glass">
+              <div class="hdr"><span><i id="s4-led"></i><b>MISSION 01</b></span><span id="s4-status">STANDBY</span></div>
+              <svg id="s4-wire" viewBox="0 0 330 300"></svg>
+              <svg id="s4-ring" viewBox="0 0 170 170"></svg>
+              <svg id="s4-lock" viewBox="0 0 56 60"></svg>
+              <div id="s4-bars"><i></i><i></i><i></i><i></i><i></i></div>
+              <div id="s4-code"><div id="s4-c1"></div><div id="s4-c2"></div><div id="s4-c3"></div><div id="s4-c4"></div><div id="s4-c5" class="ok"></div></div>
+              <div id="s4-access">CHALLENGE&nbsp;OPEN</div>
+            </div>
+            <div id="s4-ripple"></div>
+          </div>
+          <div id="s4-scan"></div>
+        </div>
+        <div id="s4-text">
+          <div id="s4-sub" class="ar glow-text">
+            <div><span class="w">قبل</span> <span class="w">انطلاق</span> <span class="w">المؤتمر</span></div>
+            <div id="s4-pre">PRE-CONFERENCE</div>
+          </div>
+          <div id="s4-sub2" class="ar glow-text"><span class="w">نفتح</span> <span class="w">المجال</span> <span class="w">أمام</span> <span class="w accent w-strong">المبتكرين</span></div>
+          <div id="s4-head" class="ar w-strong glow-text">تحدٍّ تقني</div>
+          <div id="s4-head-en" class="en">SPACE · TECH · CHALLENGE</div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const ID = "scene-04-challenge";
+          const T = REEL.timing.get();
+          const S = T.scenes[ID];
+          const L = (c) => T.local(ID, c);
+          const d = T.d;
+          const end = S.end - S.hostStart;
+          const cut = S.start - S.hostStart;
+          const A = REEL.anim;
+          const q = (s) => document.querySelector(s);
+          const tl = gsap.timeline({ paused: true });
+
+          // same engineer design, pointing glove for the interaction
+          q("#s4-char").innerHTML = REEL.astronaut.build("s4a", { point: 1 });
+          const rig = REEL.astronaut.rig(q("#s4a"), "s4a");
+
+          // countdown ring + lock
+          q("#s4-ring").innerHTML = `
+            <circle cx="85" cy="85" r="70" fill="none" stroke="rgba(143,240,255,0.18)" stroke-width="8"/>
+            <circle id="s4-ring-p" cx="85" cy="85" r="70" fill="none" stroke="#3fe0ff" stroke-width="8" stroke-linecap="round" transform="rotate(-90 85 85)" stroke-dasharray="440" stroke-dashoffset="0"/>
+            <text id="s4-ring-t" x="85" y="150" text-anchor="middle" font-family="DIN Next LT Arabic" font-size="19" fill="#8ff0ff" letter-spacing="3">T-00:10</text>`;
+          q("#s4-lock").innerHTML = `
+            <path id="s4-shackle" d="M14 28 L14 18 C14 6,42 6,42 18 L42 28" stroke="#bff6ff" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <rect x="6" y="26" width="44" height="32" rx="7" fill="#bff6ff"/>
+            <circle cx="28" cy="40" r="5" fill="#0a1838"/><rect x="26" y="40" width="4" height="10" rx="2" fill="#0a1838"/>`;
+
+          // ---- procedural layer: pose, wireframe CubeSat, bars, countdown
+          const P = { reach: 0, look: 0, lights: 1, ring: 0, unlock: 0, energy: 0 };
+          const V = gsap.timeline({ paused: true }); // parameter timeline, seeked per frame
+          const cube = []; // 3U CubeSat: 1 x 1 x 3 box + two deployable panels
+          const box = [[-1, -1, -3], [1, -1, -3], [1, 1, -3], [-1, 1, -3], [-1, -1, 3], [1, -1, 3], [1, 1, 3], [-1, 1, 3]];
+          const edges = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
+          const panels = [[[1, -1, -2.6], [4.2, -1, -2.6], [4.2, -1, 2.6], [1, -1, 2.6]], [[-1, -1, -2.6], [-4.2, -1, -2.6], [-4.2, -1, 2.6], [-1, -1, 2.6]]];
+          function proj(p, ry, rx) {
+            let [x, y, z] = p;
+            const cy = Math.cos(ry), sy = Math.sin(ry), cx = Math.cos(rx), sx = Math.sin(rx);
+            [x, z] = [x * cy + z * sy, -x * sy + z * cy];
+            [y, z] = [y * cx - z * sx, y * sx + z * cx];
+            const f = 420 / (z + 14);
+            return [165 + x * f * 1.15, 150 + y * f * 1.15];
+          }
+          const pose = { headYaw: -0.45, headTilt: -3, bodyYaw: -0.3, armR: { sh: 18, el: -10, fs: 0.92, wr: 0 }, armL: { sh: -10, el: 18, fs: 0.9 }, legR: 2, legL: -2, lights: 1 };
+          const bars = Array.from(document.querySelectorAll("#s4-bars i"));
+          A.clock(tl, S.hostDuration, (t) => {
+            V.totalTime(t, true);
+            // pose: from relaxed to reaching the panel (sh 18 -> 104, elbow bends up)
+            const k = P.reach;
+            pose.armR.sh = 18 + 60 * k + Math.sin(t * 1.4) * 1.2;
+            pose.armR.el = -10 + 44 * k;
+            pose.armR.fs = 0.92 - 0.14 * k;
+            pose.armR.wr = 10 * k;
+            pose.headYaw = -0.25 - 0.3 * P.look;
+            pose.headTilt = -2 - 2 * P.look + Math.sin(t * 0.9) * 0.6;
+            pose.armL.sh = -10 - Math.sin(t * 1.2) * 1.2;
+            pose.lights = 0.7 + 0.3 * P.energy;
+            rig.set(pose);
+            q("#s4-char").style.transform = `translate(0px, ${(Math.sin(t * 1.7) * 5).toFixed(2)}px)`;
+            // wireframe CubeSat
+            const ry = t * 0.9 * T.k + 0.6, rx = -0.42;
+            let dpath = "", ppath = "";
+            for (const [a, b] of edges) { const p = proj(box[a], ry, rx), r = proj(box[b], ry, rx); dpath += `M${p[0].toFixed(1)} ${p[1].toFixed(1)} L${r[0].toFixed(1)} ${r[1].toFixed(1)} `; }
+            for (const pn of panels) {
+              const pts = pn.map((v) => proj(v, ry, rx));
+              ppath += "M" + pts.map((p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" L") + " Z ";
+              for (let i = 1; i < 4; i++) { const a = proj([pn[0][0] + ((pn[1][0] - pn[0][0]) * i) / 4, -1, -2.6], ry, rx), b = proj([pn[0][0] + ((pn[1][0] - pn[0][0]) * i) / 4, -1, 2.6], ry, rx); ppath += `M${a[0].toFixed(1)} ${a[1].toFixed(1)} L${b[0].toFixed(1)} ${b[1].toFixed(1)} `; }
+            }
+            q("#s4-wire").innerHTML = `<path d="${ppath}" stroke="#3fe0ff" stroke-opacity="0.75" stroke-width="2" fill="rgba(46,123,255,0.18)"/>
+              <path d="${dpath}" stroke="#bff6ff" stroke-width="2.6" fill="none"/>
+              <ellipse cx="165" cy="268" rx="120" ry="18" fill="none" stroke="#3fe0ff" stroke-opacity="0.35" stroke-width="2"/>`;
+            // telemetry bars
+            bars.forEach((b, i) => { const lv = 0.25 + 0.55 * P.energy * (0.55 + 0.45 * Math.sin(t * (3 + i * 0.7) + i * 1.3)); b.style.transform = `scaleY(${lv.toFixed(3)})`; });
+            // countdown ring
+            q("#s4-ring-p").setAttribute("stroke-dashoffset", (440 * P.ring).toFixed(1));
+            const secs = Math.max(0, Math.ceil(10 * (1 - P.ring)));
+            q("#s4-ring-t").textContent = `T-00:${String(secs).padStart(2, "0")}`;
+            // lock opens
+            q("#s4-shackle").setAttribute("transform", `translate(0,${(-9 * P.unlock).toFixed(2)}) rotate(${(-28 * P.unlock).toFixed(2)} 42 28)`);
+            q("#s4-led").style.background = P.unlock > 0.5 ? "#7cffb2" : "#ffb347";
+            q("#s4-status").textContent = P.unlock > 0.5 ? (P.energy > 0.9 ? "LIVE" : "ACCESS") : "STANDBY";
+          });
+
+          // ---- parameter animation (V) on the spoken words
+          V.fromTo(P, { ring: 0 }, { ring: 0.85, duration: L("naftah") - L("qabla"), ease: "none" }, L("qabla"));
+          V.fromTo(P, { reach: 0 }, { reach: 1, duration: d(0.55), ease: "power3.inOut", immediateRender: false }, L("naftah") - d(0.25));
+          V.fromTo(P, { look: 0 }, { look: 1, duration: d(0.6), ease: "sine.inOut", immediateRender: false }, L("naftah") - d(0.4));
+          V.fromTo(P, { unlock: 0 }, { unlock: 1, duration: d(0.35), ease: "back.out(2)", immediateRender: false }, L("almajal"));
+          V.fromTo(P, { energy: 0 }, { energy: 1, duration: d(0.8), ease: "power2.out", immediateRender: false }, L("almajal"));
+          V.fromTo(P, { reach: 1 }, { reach: 0.55, duration: d(0.7), ease: "power2.inOut", immediateRender: false }, L("tahaddin") - d(0.2));
+
+          // ---- entrance: HUD scan line reveals the scene top -> bottom
+          tl.fromTo("#s4-scan", { y: 0, opacity: 1 }, { y: 1920, duration: d(0.5), ease: "power2.inOut" }, cut - d(0.25));
+          tl.set("#s4-scan", { opacity: 0 }, cut + d(0.26));
+          tl.fromTo("#s4-all", { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: d(0.5), ease: "power2.inOut" }, cut - d(0.25));
+          tl.fromTo("#s4-char", { x: 140, opacity: 0 }, { x: 0, opacity: 1, duration: d(0.8), ease: "expo.out" }, cut);
+          tl.fromTo("#s4-panel", { opacity: 0, scale: 0.92, rotationY: 28, transformPerspective: 1500 }, { opacity: 1, scale: 1, rotationY: 12, transformPerspective: 1500, duration: d(0.85), ease: "expo.out" }, cut + d(0.1));
+          tl.fromTo("#s4-floor", { rotationX: 70, transformPerspective: 900, y: 120, opacity: 0 }, { rotationX: 70, transformPerspective: 900, y: 0, opacity: 0.5, duration: d(1), ease: "power2.out" }, cut);
+
+          // code typing (deterministic)
+          const code = [["#s4-c1", "orbit.init(alt=550, inc=97.6)"], ["#s4-c2", "sat.deploy(panels=2)"], ["#s4-c3", 'link.uplink("IQ-01")'], ["#s4-c4", "data.stream(mode=\"live\")"], ["#s4-c5", "[OK] mission ready"]];
+          let ct = L("qabla") + d(0.1);
+          code.forEach(([sel, txt], i) => { A.type(tl, q(sel), txt, ct, 46 * T.k); ct += txt.length / (46 * T.k) + d(0.12); if (i === 3) ct = Math.max(ct, L("almubtakirin")); });
+          tl.fromTo("#s4-access", { opacity: 0.35, filter: "saturate(0.2) brightness(0.6)" }, { opacity: 1, filter: "saturate(1) brightness(1)", duration: d(0.3), ease: "power2.out" }, L("almajal") + d(0.1));
+
+          // touch ripple where the fingertip meets the glass
+          tl.set("#s4-ripple", { left: 520, top: 430 }, 0);
+          tl.fromTo("#s4-ripple", { scale: 0.3, opacity: 0.95 }, { scale: 4.2, opacity: 0, duration: d(0.6), ease: "power2.out", immediateRender: false }, L("naftah") + d(0.3));
+          tl.fromTo("#s4-glass", { boxShadow: "0 0 40px rgba(63,224,255,0.35), inset 0 0 40px rgba(63,224,255,0.12)" }, { boxShadow: "0 0 90px rgba(63,224,255,0.75), inset 0 0 70px rgba(63,224,255,0.35)", duration: d(0.25), yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, L("naftah") + d(0.3));
+
+          // ---- text: «قبل انطلاق المؤتمر» -> «نفتح المجال أمام المبتكرين» -> «تحدٍّ تقني»
+          const s1w = Array.from(document.querySelectorAll("#s4-sub .w"));
+          A.wordsIn(tl, s1w, [L("qabla"), L("intilaq"), L("almutamar2")].map((x) => x - d(0.05)), { y: 26, blur: 10, duration: d(0.45) });
+          tl.fromTo("#s4-pre", { opacity: 0, scaleX: 1.35 }, { opacity: 1, scaleX: 1, duration: d(0.6), ease: "expo.out", transformOrigin: "50% 50%" }, L("intilaq"));
+          A.out(tl, "#s4-sub", L("naftah") - d(0.28), { y: -36, duration: d(0.26) });
+          const s2w = Array.from(document.querySelectorAll("#s4-sub2 .w"));
+          A.wordsIn(tl, s2w, [L("naftah"), L("almajal"), L("amama"), L("almubtakirin")].map((x) => x - d(0.05)), { y: 26, blur: 10, duration: d(0.45) });
+          tl.to("#s4-sub2", { y: -20, scale: 0.82, opacity: 0.7, duration: d(0.4), ease: "power2.out", transformOrigin: "50% 0%" }, L("tahaddin") - d(0.2));
+          // headline: fast punch-in with a two-beat micro glitch
+          tl.fromTo("#s4-head", { opacity: 0, scale: 1.5, filter: "blur(20px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: d(0.42), ease: "expo.out" }, L("tahaddin") - d(0.06));
+          A.glitch(tl, "#s4-head", L("tahaddin") + d(0.32), { duration: d(0.2), steps: 5, amp: 16, seed: 41, rest: "0 0 22px rgba(63,224,255,0.35), 0 2px 18px rgba(2,4,10,0.85)" });
+          tl.fromTo("#s4-head-en", { opacity: 0, scaleX: 1.4 }, { opacity: 1, scaleX: 1, duration: d(0.6), ease: "expo.out", transformOrigin: "50% 50%" }, L("tiqni"));
+          const hs = A.addSweep(q("#s4-head"), "rgba(255,255,255,0.9)");
+          A.sweep(tl, hs, L("tiqni") + d(0.1), d(0.6));
+
+          // ---- exit: the panel expands toward centre (becomes the website window)
+          const x0 = end - d(0.38);
+          tl.to("#s4-panel", { x: 260, y: 40, scale: 1.55, rotationY: 0, opacity: 0, duration: d(0.5), ease: "power3.in" }, x0);
+          tl.to("#s4-char", { x: 260, opacity: 0, duration: d(0.4), ease: "power2.in" }, x0);
+          tl.to("#s4-text", { y: -60, opacity: 0, filter: "blur(10px)", duration: d(0.35), ease: "power2.in" }, x0 + d(0.04));
+          tl.to(["#s4-dim", "#s4-floor"], { opacity: 0, duration: d(0.45), ease: "power1.in" }, x0);
+
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

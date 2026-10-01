@@ -1,0 +1,60 @@
+/* Typography — the ONE project font (DIN Next LT Arabic) for Arabic AND Latin.
+   (@font-face lives in the root index.html with a root-relative path.)
+   The font ships a single Regular cut; hierarchy comes from size, colour and glow.
+   .w-strong adds a hairline stroke in the text colour for a heavier display weight
+   without substituting another font.
+   NOTE: never letter-space Arabic — tracking breaks the cursive joins. Only the
+   Latin HUD labels (.hud-label) are tracked. */
+.ar {
+  font-family: "DIN Next LT Arabic", sans-serif;
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.22;
+  color: var(--white);
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+.en {
+  font-family: "DIN Next LT Arabic", sans-serif;
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+.w-strong { -webkit-text-stroke: 0.022em currentColor; paint-order: stroke fill; }
+.w-medium { -webkit-text-stroke: 0.012em currentColor; paint-order: stroke fill; }
+
+.t-hero { font-size: var(--fs-hero); line-height: 1.12; }
+.t-title { font-size: var(--fs-title); line-height: 1.16; }
+.t-h2 { font-size: var(--fs-h2); line-height: 1.2; }
+.t-h3 { font-size: var(--fs-h3); line-height: 1.25; }
+.t-body { font-size: var(--fs-body); line-height: 1.35; }
+
+.glow-text { text-shadow: var(--glow-text); }
+.accent {
+  color: var(--cyan);
+  background: linear-gradient(180deg, #e9fdff 0%, #8ff0ff 38%, #3fe0ff 70%, #2e7bff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(63, 224, 255, 0.45));
+}
+.accent.w-strong { -webkit-text-stroke: 0.022em rgba(143, 240, 255, 0.85); }
+
+.hud-label {
+  font-family: "DIN Next LT Arabic", sans-serif;
+  direction: ltr;
+  font-size: var(--fs-label);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--cyan-soft);
+}
+.hud-micro {
+  font-family: "DIN Next LT Arabic", sans-serif;
+  direction: ltr;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.18em;
+  color: rgba(207, 238, 255, 0.72);
+}

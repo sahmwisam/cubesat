@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- SCENE 02 — THE GATHERING (the conference)
+         VO: «حدثٌ يجمع نخبة من المهندسين والعلماء والباحثين»
+         Modern engineering conference hall: giant LED screen (live Earth with Iraq
+         highlighted), podium speaker, small waving Iraqi flag on stage, media
+         cameras, audience silhouettes (no real people). AR tags pin
+         «المهندسين / العلماء / الباحثين» to the audience on the spoken words.
+         Exit: camera dives into the screen's Earth (match cut to scene 03). -->
+  </head>
+  <body>
+    <template id="scene-02-gathering-template">
+      <style>
+        [data-composition-id="scene-02-gathering"] { position: absolute; inset: 0; overflow: hidden; }
+        #s2-cam { position: absolute; inset: 0; }
+        #s2-hall { position: absolute; inset: 0; background: linear-gradient(180deg, #02050f 0%, #061230 34%, #071433 52%, #040a1c 70%, #02040a 100%); }
+        #s2-ceiling { position: absolute; left: 0; top: 0; width: 1080px; height: 420px; }
+        .s2-beam { position: absolute; top: -60px; width: 300px; height: 1250px; transform-origin: 50% 0%;
+          background: linear-gradient(180deg, rgba(160, 235, 255, 0.34) 0%, rgba(63, 224, 255, 0.10) 45%, rgba(46, 123, 255, 0) 100%);
+          clip-path: polygon(44% 0%, 56% 0%, 100% 100%, 0% 100%); filter: blur(6px); mix-blend-mode: screen; }
+        #s2-screen-wrap { position: absolute; left: 60px; top: 470px; width: 960px; height: 470px; }
+        #s2-screen { position: absolute; inset: 0; border-radius: 22px; overflow: hidden;
+          background: radial-gradient(120% 120% at 30% 40%, #0d2a66 0%, #071a42 45%, #040d24 100%);
+          box-shadow: 0 0 0 3px rgba(143, 240, 255, 0.35), 0 0 60px rgba(63, 224, 255, 0.35), 0 0 160px rgba(46, 123, 255, 0.35); }
+        #s2-screen-grid { position: absolute; inset: 0; opacity: 0.35;
+          background-image: linear-gradient(rgba(143, 240, 255, 0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(143, 240, 255, 0.18) 1px, transparent 1px);
+          background-size: 40px 40px; }
+        #s2-screen-earth { position: absolute; left: 70px; top: -20px; }
+        #s2-screen-orbit { position: absolute; left: 0; top: 0; width: 960px; height: 470px; overflow: visible; }
+        #s2-screen-txt { position: absolute; right: 54px; top: 120px; width: 380px; text-align: right; }
+        #s2-screen-txt .k { font-size: 26px; letter-spacing: 0.3em; color: #8ff0ff; direction: ltr; text-align: right; }
+        #s2-screen-txt .t { font-size: 44px; line-height: 1.25; color: #f4f8ff; margin-top: 14px; }
+        #s2-screen-txt .bar { height: 4px; margin-top: 18px; width: 180px; margin-left: auto; background: linear-gradient(90deg, transparent, #3fe0ff); }
+        #s2-live { position: absolute; left: 22px; top: 20px; display: flex; align-items: center; gap: 10px; padding: 6px 14px; border-radius: 6px; background: rgba(206, 17, 38, 0.9); font-size: 22px; letter-spacing: 0.2em; color: #fff; direction: ltr; }
+        #s2-live i { width: 10px; height: 10px; border-radius: 50%; background: #fff; display: block; }
+        #s2-screen-glare { position: absolute; inset: 0; border-radius: 22px; background: linear-gradient(115deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 38%); }
+        #s2-stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+        #s2-flag { position: absolute; left: 150px; top: 960px; width: 132px; height: 88px; }
+        #s2-crowd { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+        #s2-text { position: absolute; left: 60px; right: 60px; top: 262px; text-align: center; }
+        #s2-line { font-size: 78px; line-height: 1.2; }
+        #s2-line .w { display: inline-block; }
+        .s2-tag { position: absolute; display: flex; flex-direction: column; align-items: center; }
+        .s2-chip { display: flex; align-items: center; gap: 14px; padding: 12px 26px 14px; border-radius: 40px;
+          background: linear-gradient(180deg, rgba(14, 42, 92, 0.92), rgba(5, 11, 31, 0.92)); border: 2px solid rgba(143, 240, 255, 0.75);
+          box-shadow: 0 0 26px rgba(63, 224, 255, 0.45), inset 0 0 18px rgba(63, 224, 255, 0.18); }
+        .s2-chip .ar { font-size: 58px; line-height: 1.1; }
+        .s2-chip svg { width: 40px; height: 40px; flex: none; }
+        .s2-stem { width: 2px; height: 70px; background: linear-gradient(180deg, rgba(143, 240, 255, 0.9), rgba(143, 240, 255, 0)); }
+        .s2-dot { width: 14px; height: 14px; border-radius: 50%; background: #bff6ff; box-shadow: 0 0 14px #3fe0ff; }
+      </style>
+
+      <div data-composition-id="scene-02-gathering" data-width="1080" data-height="1920">
+        <div id="s2-cam">
+          <div id="s2-hall"></div>
+          <div id="s2-ceiling">
+            <div class="s2-beam" id="s2-beam1" style="left: 20px; width: 260px; opacity: 0.9"></div>
+            <div class="s2-beam" id="s2-beam2" style="left: 340px; width: 400px; opacity: 0.55"></div>
+            <div class="s2-beam" id="s2-beam3" style="left: 790px; width: 240px; opacity: 0.8"></div>
+          </div>
+          <div id="s2-screen-wrap">
+            <div id="s2-screen">
+              <div id="s2-screen-grid"></div>
+              <div id="s2-screen-earth"></div>
+              <svg id="s2-screen-orbit" viewBox="0 0 960 470"></svg>
+              <div id="s2-screen-txt">
+                <div class="k en">SPACE · SATELLITES</div>
+                <div class="t ar">المؤتمر السنوي لتكنولوجيا الفضاء والأقمار الاصطناعية</div>
+                <div class="bar"></div>
+              </div>
+              <div id="s2-live"><i></i>LIVE</div>
+              <div id="s2-screen-glare"></div>
+            </div>
+          </div>
+          <svg id="s2-stage" viewBox="0 0 1080 1920"></svg>
+          <div id="s2-flag"></div>
+          <div id="s2-spill" style="position:absolute;left:-100px;top:1080px;width:1280px;height:700px;background:radial-gradient(60% 55% at 45% 0%, rgba(63,224,255,0.16), rgba(46,123,255,0.06) 55%, transparent 100%);"></div>
+          <svg id="s2-crowd" viewBox="0 0 1080 1920"></svg>
+          <div id="s2-tags"></div>
+        </div>
+        <div id="s2-text">
+          <div id="s2-line" class="ar glow-text">
+            <span class="w">حدثٌ</span> <span class="w">يجمع</span> <span class="w accent w-strong">نخبة</span> <span class="w">من</span>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const ID = "scene-02-gathering";
+          const T = REEL.timing.get();
+          const S = T.scenes[ID];
+          const L = (c) => T.local(ID, c);
+          const d = T.d;
+          const end = S.end - S.hostStart;
+          const A = REEL.anim;
+          const q = (s) => document.querySelector(s);
+          const r = REEL.util.prng(2002);
+          const tl = gsap.timeline({ paused: true });
+
+          // ---------- giant screen content
+          // rotation law shared with scene 03 (it continues this spin after the cut)
+          REEL.screenEarthLambda = (tLocal) => -30 - tLocal * 9;
+          const earth = REEL.earth.create(q("#s2-screen-earth"), { id: "s2e", r: 200, dots: true });
+          q("#s2-screen-orbit").innerHTML = `
+            <ellipse cx="318" cy="268" rx="300" ry="92" fill="none" stroke="#8ff0ff" stroke-opacity="0.45" stroke-width="2" transform="rotate(-14 318 268)"/>
+            <ellipse cx="318" cy="268" rx="250" ry="150" fill="none" stroke="#3fe0ff" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="5 9" transform="rotate(28 318 268)"/>
+            <g id="s2-sat" transform="translate(0,0)"><circle r="7" fill="#ffffff"/><circle r="18" fill="#3fe0ff" opacity="0.3"/></g>`;
+
+          // ---------- stage, podium, speaker, media cameras (vector silhouettes)
+          const camRig = (x, y, flip) => `
+            <g transform="translate(${x},${y}) scale(${flip ? -1 : 1},1)">
+              <path d="M0 0 L-46 250 M0 0 L46 250 M0 0 L0 255" stroke="#0a1430" stroke-width="7"/>
+              <rect x="-70" y="-74" width="128" height="70" rx="10" fill="#0a1430" stroke="rgba(143,240,255,0.35)" stroke-width="2"/>
+              <rect x="58" y="-62" width="44" height="46" rx="8" fill="#0a1430" stroke="rgba(143,240,255,0.35)" stroke-width="2"/>
+              <circle cx="104" cy="-39" r="16" fill="#071027" stroke="rgba(143,240,255,0.5)" stroke-width="2"/>
+              <rect x="-58" y="-92" width="54" height="16" rx="4" fill="#0a1430"/>
+              <circle class="s2-tally" cx="-40" cy="-60" r="7" fill="#ff2d4a"/>
+            </g>`;
+          q("#s2-stage").innerHTML = `
+            <defs>
+              <linearGradient id="s2-floor" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#0d2554"/><stop offset="1" stop-color="#030816"/>
+              </linearGradient>
+              <linearGradient id="s2-pod" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#0b1a3c"/><stop offset="0.5" stop-color="#16316a"/><stop offset="1" stop-color="#0b1a3c"/>
+              </linearGradient>
+              <radialGradient id="s2-refl" cx="0.5" cy="0" r="0.8">
+                <stop offset="0" stop-color="#3fe0ff" stop-opacity="0.35"/><stop offset="1" stop-color="#3fe0ff" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <path d="M0 1030 L1080 1030 L1080 1150 L0 1150 Z" fill="url(#s2-floor)"/>
+            <ellipse cx="540" cy="1036" rx="520" ry="70" fill="url(#s2-refl)"/>
+            <path d="M0 1030 L1080 1030" stroke="#8ff0ff" stroke-width="3" opacity="0.8"/>
+            <path d="M0 1036 L1080 1036" stroke="#3fe0ff" stroke-width="10" opacity="0.18"/>
+            <!-- flag pole -->
+            <path d="M150 958 L150 1032" stroke="#c9d3e3" stroke-width="5"/>
+            <circle cx="150" cy="955" r="6" fill="#e9eef6"/>
+            <!-- speaker + podium -->
+            <g id="s2-speaker" transform="translate(690,1030)">
+              <path d="M-58 -10 C-58 -64,-38 -88,0 -92 C38 -88,58 -64,58 -10 Z" fill="#081127"/>
+              <ellipse cx="0" cy="-118" rx="26" ry="31" fill="#081127"/>
+              <path d="M-24 -138 C-10 -152,12 -152,24 -136" stroke="rgba(143,240,255,0.55)" stroke-width="3" fill="none"/>
+            </g>
+            <path d="M628 952 L752 952 L740 1032 L640 1032 Z" fill="url(#s2-pod)"/>
+            <path d="M628 952 L752 952" stroke="#8ff0ff" stroke-width="3"/>
+            <rect x="660" y="970" width="60" height="6" rx="3" fill="#3fe0ff" opacity="0.85"/>
+            <path d="M676 952 L700 930" stroke="#c9d3e3" stroke-width="3"/>
+            ${camRig(84, 1180, false)}
+            ${camRig(996, 1180, true)}`;
+
+          // ---------- audience silhouettes (from behind), three rows in depth
+          let crowd = "";
+          const rows = [
+            { y: 1290, s: 0.58, n: 9, dx: 128, off: 20 },
+            { y: 1500, s: 0.8, n: 7, dx: 168, off: -30 },
+            { y: 1790, s: 1.08, n: 5, dx: 236, off: 10 },
+          ];
+          const heads = []; // positions for AR tags
+          rows.forEach((row, ri) => {
+            for (let i = 0; i < row.n; i++) {
+              const x = row.off + 60 + i * row.dx + (r() - 0.5) * 30;
+              const s = row.s * (0.92 + r() * 0.16);
+              const hw = 30 + r() * 8, hh = 38 + r() * 6;
+              const sw = 96 + r() * 26;
+              const hair = r() < 0.3;
+              crowd += `<g transform="translate(${x.toFixed(1)},${row.y}) scale(${s.toFixed(3)})">
+                <path d="M${-sw} 150 C${-sw} 60,${-sw * 0.6} 22,-26 12 L26 12 C${sw * 0.6} 22,${sw} 60,${sw} 150 Z" fill="#040918"/>
+                <ellipse cx="0" cy="-34" rx="${hw.toFixed(1)}" ry="${hh.toFixed(1)}" fill="#040918"/>
+                ${hair ? `<path d="M${-hw} -40 C${-hw} -90,${hw} -90,${hw} -40 C${hw * 0.5} -60,${-hw * 0.5} -60,${-hw} -40Z" fill="#060c1e"/>` : ""}
+                <path d="M${(-hw * 0.8).toFixed(1)} ${(-34 - hh * 0.62).toFixed(1)} C${(-hw * 0.3).toFixed(1)} ${(-34 - hh * 1.04).toFixed(1)},${(hw * 0.3).toFixed(1)} ${(-34 - hh * 1.04).toFixed(1)},${(hw * 0.8).toFixed(1)} ${(-34 - hh * 0.62).toFixed(1)}" stroke="rgba(143,240,255,${(0.55 + ri * 0.15).toFixed(2)})" stroke-width="${(2.6 / s).toFixed(2)}" fill="none"/>
+                <path d="M${(-sw * 0.9).toFixed(1)} 70 C${(-sw * 0.7).toFixed(1)} 32,-40 18,-26 12 M26 12 C40 18,${(sw * 0.7).toFixed(1)} 32,${(sw * 0.9).toFixed(1)} 70" stroke="rgba(63,224,255,${(0.32 + ri * 0.1).toFixed(2)})" stroke-width="${(2.2 / s).toFixed(2)}" fill="none"/>
+              </g>`;
+              heads.push({ row: ri, x, y: row.y - (34 + hh) * s, s });
+            }
+          });
+          // two raised phones documenting the event
+          const phone = (x, y, rot) => `<g transform="translate(${x},${y}) rotate(${rot}) scale(0.62)" opacity="0.8">
+              <path d="M-12 60 C-14 30,-10 10,-4 0 L10 0 C14 14,16 36,14 60 Z" fill="#040918"/>
+              <rect x="-26" y="-74" width="52" height="88" rx="9" fill="#071027" stroke="rgba(143,240,255,0.5)" stroke-width="2"/>
+              <rect x="-21" y="-68" width="42" height="74" rx="5" fill="url(#s2-phonescr)" class="s2-phonescr"/>
+            </g>`;
+          q("#s2-crowd").innerHTML = `<defs><linearGradient id="s2-phonescr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ff0ff"/><stop offset="1" stop-color="#2e7bff"/></linearGradient></defs>
+            ${crowd}${phone(318, 1395, -8)}${phone(842, 1640, 10)}
+            <g id="s2-flashes"></g>`;
+
+          // ---------- AR tags on the spoken words
+          const icon = {
+            eng: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="7" fill="none" stroke="#8ff0ff" stroke-width="3"/><path d="M20 3v6M20 31v6M3 20h6M31 20h6M8 8l4 4M28 28l4 4M8 32l4-4M28 12l4-4" stroke="#8ff0ff" stroke-width="3" stroke-linecap="round"/></svg>`,
+            sci: `<svg viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="17" ry="7" fill="none" stroke="#8ff0ff" stroke-width="2.6"/><ellipse cx="20" cy="20" rx="17" ry="7" fill="none" stroke="#8ff0ff" stroke-width="2.6" transform="rotate(60 20 20)"/><ellipse cx="20" cy="20" rx="17" ry="7" fill="none" stroke="#8ff0ff" stroke-width="2.6" transform="rotate(-60 20 20)"/><circle cx="20" cy="20" r="3.4" fill="#ffffff"/></svg>`,
+            res: `<svg viewBox="0 0 40 40"><circle cx="17" cy="17" r="10" fill="none" stroke="#8ff0ff" stroke-width="3"/><path d="M25 25l10 10" stroke="#8ff0ff" stroke-width="4" stroke-linecap="round"/><path d="M12 19l4-5 3 3 4-5" stroke="#ffffff" stroke-width="2" fill="none"/></svg>`,
+          };
+          // tags hang from real heads: back row (index 4) and middle row (2, 4)
+          const H = (i) => heads[i];
+          const tagDefs = [
+            { id: "eng", word: "المهندسين", cue: "almuhandisin", h: H(9 + 2) },
+            { id: "sci", word: "العلماء", cue: "walulama", h: H(4) },
+            { id: "res", word: "الباحثين", cue: "walbahithin", h: H(9 + 4) },
+          ].map((t) => Object.assign(t, { x: t.h.x, y: t.h.y - 182 }));
+          q("#s2-tags").innerHTML = tagDefs
+            .map((t) => `<div class="s2-tag" id="s2-tag-${t.id}" style="left:${t.x - 170}px;top:${t.y}px;width:340px">
+                <div class="s2-chip">${icon[t.id]}<span class="ar">${t.word}</span></div><div class="s2-stem"></div><div class="s2-dot"></div></div>`)
+            .join("");
+
+          // ---------- Iraqi flag on stage (small, waving)
+          q("#s2-flag").innerHTML = REEL.iraqFlag.build("s2f");
+          const flagSvg = q("#s2f");
+
+          // ---------- procedural per-frame layer
+          A.clock(tl, S.hostDuration, (t) => {
+            earth.update({ lambda: REEL.screenEarthLambda(t), phi: -22, gamma: -8, pulse: (t * 0.9) % 1, marker: 1 });
+            const a = 2.2 + t * 1.25;
+            const ex = 318 + 300 * Math.cos(a), ey = 268 + 92 * Math.sin(a);
+            const rot = (-14 * Math.PI) / 180;
+            const x = 318 + (ex - 318) * Math.cos(rot) - (ey - 268) * Math.sin(rot);
+            const y = 268 + (ex - 318) * Math.sin(rot) + (ey - 268) * Math.cos(rot);
+            q("#s2-sat").setAttribute("transform", `translate(${x.toFixed(1)},${y.toFixed(1)})`);
+            REEL.iraqFlag.wave(flagSvg, "s2f", t, 1);
+            document.querySelectorAll(".s2-tally").forEach((el, i) => el.setAttribute("opacity", Math.sin(t * 6 + i) > -0.2 ? 1 : 0.25));
+            // photographer flashes (deterministic moments)
+            const fl = [[0.9, 260, 1330], [1.7, 860, 1470], [2.6, 520, 1300], [3.3, 150, 1560]];
+            let html = "";
+            for (const [ft, fx, fy] of fl) {
+              const k = (t - ft * (T.k === 1 ? 1 : 1 / T.k)) / 0.16;
+              if (k > 0 && k < 1) {
+                const o = Math.sin(k * Math.PI);
+                html += `<circle cx="${fx}" cy="${fy}" r="${(30 + 50 * k).toFixed(1)}" fill="#ffffff" opacity="${(o * 0.55).toFixed(3)}"/><circle cx="${fx}" cy="${fy}" r="9" fill="#ffffff" opacity="${o.toFixed(3)}"/>`;
+              }
+            }
+            q("#s2-flashes").innerHTML = html;
+          });
+
+          // ---------- camera: entrance from the push-through, slow push-in, parallax
+          tl.fromTo("#s2-cam", { scale: 1.32, opacity: 0, filter: "blur(14px)" }, { scale: 1.0, opacity: 1, filter: "blur(0px)", duration: d(0.7), ease: "expo.out", transformOrigin: "50% 42%" }, 0);
+          tl.fromTo("#s2-crowd", { y: 60 }, { y: 0, duration: end, ease: "power1.out" }, 0);
+          tl.fromTo(["#s2-beam1", "#s2-beam3"], { rotation: -7 }, { rotation: 6, duration: end + d(0.4), ease: "sine.inOut" }, 0);
+          tl.fromTo("#s2-beam2", { rotation: 5 }, { rotation: -5, duration: end + d(0.4), ease: "sine.inOut" }, 0);
+          tl.fromTo("#s2-screen-txt", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: d(0.6), ease: "power3.out" }, d(0.35));
+
+          // ---------- headline, word-synced
+          const w = Array.from(document.querySelectorAll("#s2-line .w"));
+          A.wordsIn(tl, w, [L("hadath"), L("yajmau"), L("nukhba"), L("nukhba") + d(0.25)].map((x) => x - d(0.05)), { y: 30, blur: 12, duration: d(0.5) });
+
+          // ---------- AR tags pop on their words
+          tagDefs.forEach((t) => {
+            const at = L(t.cue) - d(0.04);
+            tl.fromTo(`#s2-tag-${t.id} .s2-dot`, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: d(0.25), ease: "back.out(2)" }, at);
+            tl.fromTo(`#s2-tag-${t.id} .s2-stem`, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: d(0.25), ease: "power2.out", transformOrigin: "50% 100%" }, at + d(0.05));
+            tl.fromTo(`#s2-tag-${t.id} .s2-chip`, { opacity: 0, y: 26, scale: 0.85, filter: "blur(8px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: d(0.45), ease: "expo.out" }, at + d(0.12));
+          });
+
+          // ---------- exit: dive into the giant screen's Earth. The dive ENDS exactly
+          // on the cut with the Earth at (374,694) r=520 (2.6 x 200) — scene 03
+          // starts from that exact framing, so the swap is invisible (match cut).
+          tl.to("#s2-text", { opacity: 0, y: -40, filter: "blur(10px)", duration: d(0.3), ease: "power2.in" }, end - d(0.62));
+          tl.to("#s2-tags", { opacity: 0, duration: d(0.25), ease: "power2.in" }, end - d(0.55));
+          tl.to(["#s2-crowd", "#s2-stage", "#s2-flag", "#s2-ceiling", "#s2-spill", "#s2-screen-txt", "#s2-live"], { opacity: 0, duration: d(0.42), ease: "power2.in" }, end - d(0.5));
+          tl.to("#s2-cam", { scale: 2.6, duration: d(0.55), ease: "power3.in", transformOrigin: "374px 694px" }, end - d(0.55)); // screen Earth centre
+          tl.set("#s2-cam", { opacity: 0 }, end + 0.02);
+
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

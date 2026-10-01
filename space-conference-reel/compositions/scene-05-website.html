@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- SCENE 05 — THE WEBSITE
+         VO: «عبر موقع المؤتمر الإلكتروني»
+         The mission panel expands into a futuristic browser window: the
+         conference site (hero, three mission cards, «سجّل الآن»), a cursor that
+         clicks the CTA on «الإلكتروني». No URL is invented — the address bar
+         shows a lock and the site name only. Exit: the window collapses into a
+         point of light (→ warp into the final scene). -->
+  </head>
+  <body>
+    <template id="scene-05-website-template">
+      <style>
+        [data-composition-id="scene-05-website"] { position: absolute; inset: 0; overflow: hidden; }
+        #s5-all { position: absolute; inset: 0; }
+        #s5-dim { position: absolute; inset: 0; background: radial-gradient(110% 70% at 50% 55%, rgba(14, 42, 92, 0.45), rgba(2, 4, 10, 0.7) 75%); }
+        #s5-win { position: absolute; left: 80px; top: 560px; width: 920px; height: 980px; }
+        #s5-frame { position: absolute; inset: 0; border-radius: 30px; overflow: hidden; background: #040b1f;
+          border: 2px solid rgba(143, 240, 255, 0.75); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 0 60px rgba(63, 224, 255, 0.4), 0 40px 120px rgba(0, 0, 0, 0.6); }
+        #s5-chrome { position: absolute; left: 0; right: 0; top: 0; height: 74px; display: flex; align-items: center; gap: 18px; padding: 0 24px; direction: ltr;
+          background: linear-gradient(180deg, rgba(20, 50, 110, 0.95), rgba(10, 26, 62, 0.95)); border-bottom: 1px solid rgba(143, 240, 255, 0.35); }
+        #s5-chrome .dots { display: flex; gap: 10px; }
+        #s5-chrome .dots i { width: 14px; height: 14px; border-radius: 50%; background: rgba(143, 240, 255, 0.55); display: block; }
+        #s5-url { flex: 1; height: 44px; border-radius: 22px; background: rgba(2, 8, 24, 0.75); border: 1px solid rgba(143, 240, 255, 0.3); display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 25px; color: #cfeeff; }
+        #s5-url svg { width: 18px; height: 22px; }
+        #s5-page { position: absolute; left: 0; right: 0; top: 74px; bottom: 0; }
+        #s5-nav { height: 84px; display: flex; align-items: center; justify-content: space-between; padding: 0 34px; direction: rtl; border-bottom: 1px solid rgba(143, 240, 255, 0.14); }
+        #s5-brand { display: flex; align-items: center; gap: 14px; font-size: 27px; color: #f4f8ff; }
+        #s5-brand svg { width: 42px; height: 42px; }
+        #s5-iq { width: 30px; height: 20px; border-radius: 3px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35); }
+        #s5-iq i { flex: 1; display: block; }
+        #s5-links { display: flex; gap: 28px; font-size: 24px; color: rgba(207, 238, 255, 0.75); }
+        #s5-links .on { color: #8ff0ff; }
+        #s5-hero { position: relative; height: 360px; overflow: hidden; direction: rtl; text-align: center;
+          background: radial-gradient(80% 120% at 50% 0%, rgba(46, 123, 255, 0.35), rgba(5, 11, 31, 0) 70%), linear-gradient(180deg, #071a44, #040b1f); }
+        #s5-hero-stars { position: absolute; inset: 0; }
+        #s5-hero-orbit { position: absolute; left: 0; top: 0; width: 920px; height: 360px; overflow: visible; }
+        #s5-hero-k { position: relative; padding-top: 44px; font-size: 22px; letter-spacing: 0.36em; color: #8ff0ff; direction: ltr; }
+        #s5-hero-t { position: relative; margin-top: 12px; font-size: 66px; line-height: 1.2; }
+        #s5-hero-s { position: relative; margin-top: 8px; font-size: 30px; color: rgba(207, 238, 255, 0.85); }
+        #s5-cta { position: relative; margin: 26px auto 0; width: 300px; height: 70px; border-radius: 36px; display: flex; align-items: center; justify-content: center; gap: 12px;
+          background: linear-gradient(90deg, #3fe0ff, #2e7bff); color: #02040a; font-size: 33px; box-shadow: 0 0 34px rgba(63, 224, 255, 0.7); }
+        #s5-cta-done { position: absolute; inset: 0; border-radius: 36px; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(90deg, #7cffb2, #3fe0ff); opacity: 0; }
+        #s5-cta-done svg { width: 30px; height: 30px; }
+        #s5-cards { display: flex; gap: 22px; padding: 34px 34px 0; direction: rtl; }
+        .s5-card { flex: 1; height: 330px; border-radius: 22px; padding: 26px 20px; text-align: center;
+          background: linear-gradient(180deg, rgba(20, 60, 130, 0.55), rgba(6, 18, 46, 0.85)); border: 1px solid rgba(143, 240, 255, 0.4); box-shadow: inset 0 0 30px rgba(63, 224, 255, 0.1); }
+        .s5-card svg { width: 84px; height: 84px; display: block; margin: 8px auto 14px; }
+        .s5-card .n { font-size: 19px; letter-spacing: 0.3em; color: #8ff0ff; direction: ltr; }
+        .s5-card .t { margin-top: 12px; font-size: 33px; line-height: 1.25; color: #f4f8ff; }
+        .s5-card .bar { height: 6px; border-radius: 3px; margin: 22px 16px 0; background: rgba(143, 240, 255, 0.15); overflow: hidden; }
+        .s5-card .bar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #2e7bff, #3fe0ff); transform-origin: 100% 50%; }
+        #s5-glare { position: absolute; inset: 0; border-radius: 30px; pointer-events: none;
+          background: linear-gradient(105deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.16) 45%, rgba(255, 255, 255, 0) 60%); background-size: 300% 100%; background-position: var(--gx, 120%) 0; }
+        #s5-cursor { position: absolute; left: 0; top: 0; width: 44px; height: 56px; overflow: visible; }
+        #s5-click { position: absolute; left: 490px; top: 440px; width: 50px; height: 50px; margin: -25px 0 0 -25px; border-radius: 50%; border: 3px solid #bff6ff; opacity: 0; }
+        #s5-text { position: absolute; left: 60px; right: 60px; top: 300px; text-align: center; }
+        #s5-line { font-size: 74px; line-height: 1.22; }
+        #s5-line .w { display: inline-block; }
+        #s5-spark { position: absolute; left: 540px; top: 1050px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; opacity: 0;
+          background: radial-gradient(closest-side, #ffffff, rgba(143, 240, 255, 0.8) 40%, rgba(63, 224, 255, 0) 100%); }
+      </style>
+
+      <div data-composition-id="scene-05-website" data-width="1080" data-height="1920">
+        <div id="s5-all">
+          <div id="s5-dim"></div>
+          <div id="s5-win">
+            <div id="s5-frame">
+              <div id="s5-chrome">
+                <div class="dots"><i></i><i></i><i></i></div>
+                <div id="s5-url" class="ar">
+                  <svg viewBox="0 0 18 22"><path d="M4 10 V7 C4 2,14 2,14 7 V10" stroke="#7cffb2" stroke-width="2.5" fill="none"/><rect x="1" y="9.5" width="16" height="12" rx="3" fill="#7cffb2"/></svg>
+                  <span>موقع المؤتمر الإلكتروني</span>
+                </div>
+              </div>
+              <div id="s5-page">
+                <div id="s5-nav">
+                  <div id="s5-brand" class="ar">
+                    <svg viewBox="0 0 42 42"><circle cx="21" cy="21" r="8" fill="#3fe0ff"/><ellipse cx="21" cy="21" rx="19" ry="8" fill="none" stroke="#8ff0ff" stroke-width="2.4" transform="rotate(-25 21 21)"/><circle cx="37" cy="13" r="3" fill="#fff"/></svg>
+                    <span>المؤتمر السنوي لتكنولوجيا الفضاء</span>
+                    <div id="s5-iq"><i style="background:#CE1126"></i><i style="background:#fff"></i><i style="background:#111"></i></div>
+                  </div>
+                  <div id="s5-links" class="ar"><span>الرئيسية</span><span class="on">التحدي</span><span>التسجيل</span></div>
+                </div>
+                <div id="s5-hero">
+                  <canvas id="s5-hero-stars" width="920" height="360" data-layout-allow-overflow></canvas>
+                  <svg id="s5-hero-orbit" viewBox="0 0 920 360"></svg>
+                  <div id="s5-hero-k" class="en">SPACE TECHNOLOGY CHALLENGE</div>
+                  <div id="s5-hero-t" class="ar w-strong glow-text">تحدّي تكنولوجيا الفضاء</div>
+                  <div id="s5-hero-s" class="ar">للمبتكرين قبل انطلاق المؤتمر</div>
+                  <div id="s5-cta" class="ar"><span data-layout-allow-overlap>سجّل الآن</span>
+                    <div id="s5-cta-done" class="ar"><svg viewBox="0 0 30 30"><path d="M6 15 L12.5 21.5 L24 9" stroke="#02040a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-layout-allow-overlap>تم التسجيل</span></div>
+                  </div>
+                </div>
+                <div id="s5-cards">
+                  <div class="s5-card" id="s5-card1">
+                    <svg viewBox="0 0 84 84"><rect x="32" y="26" width="20" height="32" rx="3" fill="none" stroke="#8ff0ff" stroke-width="3"/><rect x="6" y="34" width="22" height="16" rx="2" fill="#2e7bff" stroke="#8ff0ff" stroke-width="2"/><rect x="56" y="34" width="22" height="16" rx="2" fill="#2e7bff" stroke="#8ff0ff" stroke-width="2"/><path d="M42 26 V14" stroke="#8ff0ff" stroke-width="3"/><circle cx="42" cy="11" r="4" fill="#fff"/></svg>
+                    <div class="n">MISSION 01</div><div class="t ar">تصميم المهمة</div><div class="bar"><i></i></div>
+                  </div>
+                  <div class="s5-card" id="s5-card2">
+                    <svg viewBox="0 0 84 84"><path d="M30 24 L14 42 L30 60 M54 24 L70 42 L54 60" stroke="#8ff0ff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M47 18 L37 66" stroke="#3fe0ff" stroke-width="4" stroke-linecap="round"/></svg>
+                    <div class="n">MISSION 02</div><div class="t ar">البرمجة والأنظمة</div><div class="bar"><i></i></div>
+                  </div>
+                  <div class="s5-card" id="s5-card3">
+                    <svg viewBox="0 0 84 84"><path d="M12 70 H74" stroke="#8ff0ff" stroke-width="3"/><rect x="18" y="44" width="10" height="22" rx="2" fill="#2e7bff"/><rect x="36" y="30" width="10" height="36" rx="2" fill="#3fe0ff"/><rect x="54" y="18" width="10" height="48" rx="2" fill="#8ff0ff"/><path d="M14 40 L32 26 L48 32 L70 12" stroke="#fff" stroke-width="2.5" fill="none"/></svg>
+                    <div class="n">MISSION 03</div><div class="t ar">تحليل البيانات</div><div class="bar"><i></i></div>
+                  </div>
+                </div>
+              </div>
+              <div id="s5-glare"></div>
+            </div>
+            <div id="s5-click"></div>
+            <svg id="s5-cursor" viewBox="0 0 44 56"><path d="M4 3 L4 46 L15 35 L23 53 L31 49 L23 32 L39 32 Z" fill="#ffffff" stroke="#0a1838" stroke-width="2.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div id="s5-spark"></div>
+        </div>
+        <div id="s5-text">
+          <div id="s5-line" class="ar glow-text">
+            <span class="w">عبر</span> <span class="w accent w-strong">موقع</span> <span class="w">المؤتمر</span> <span class="w">الإلكتروني</span>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const ID = "scene-05-website";
+          const T = REEL.timing.get();
+          const S = T.scenes[ID];
+          const L = (c) => T.local(ID, c);
+          const d = T.d;
+          const end = S.end - S.hostStart;
+          const cut = S.start - S.hostStart;
+          const A = REEL.anim;
+          const q = (s) => document.querySelector(s);
+          const tl = gsap.timeline({ paused: true });
+
+          // hero: tiny starfield + an orbit with a moving light (deterministic)
+          const cv = q("#s5-hero-stars"), g = cv.getContext("2d");
+          const r = REEL.util.prng(505);
+          const st = Array.from({ length: 90 }, () => [r() * 920, r() * 360, 0.4 + r() * 1.2, r() * 6.28]);
+          q("#s5-hero-orbit").innerHTML = `<ellipse cx="460" cy="250" rx="520" ry="70" fill="none" stroke="#8ff0ff" stroke-opacity="0.3" stroke-width="2"/><circle id="s5-ob" r="6" fill="#fff"/>`;
+          A.clock(tl, S.hostDuration, (t) => {
+            g.clearRect(0, 0, 920, 360);
+            for (const [x, y, s, p] of st) { g.fillStyle = `rgba(220,240,255,${(0.35 + 0.35 * Math.sin(t * 2 + p)).toFixed(3)})`; g.beginPath(); g.arc(x, y, s, 0, 6.283); g.fill(); }
+            const a = 3.6 + t * 1.1;
+            q("#s5-ob").setAttribute("cx", (460 + 520 * Math.cos(a)).toFixed(1));
+            q("#s5-ob").setAttribute("cy", (250 + 70 * Math.sin(a)).toFixed(1));
+          });
+
+          // ---- entrance: window grows out of the mission panel (left) to centre
+          tl.fromTo("#s5-dim", { opacity: 0 }, { opacity: 1, duration: d(0.4) }, cut - d(0.2));
+          tl.fromTo("#s5-win", { x: -150, y: -10, scale: 0.6, rotationY: 14, transformPerspective: 1800, opacity: 0, filter: "brightness(1.8) blur(6px)" },
+            { x: 0, y: 0, scale: 1, rotationY: 0, transformPerspective: 1800, opacity: 1, filter: "brightness(1) blur(0px)", duration: d(0.75), ease: "expo.out" }, cut - d(0.18));
+          tl.fromTo("#s5-win", { rotationX: 0 }, { rotationX: 4, duration: end - cut, ease: "sine.inOut", immediateRender: false }, cut + d(0.6));
+          // page builds in
+          tl.fromTo("#s5-nav", { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration: d(0.4), ease: "power2.out" }, cut + d(0.15));
+          tl.fromTo(["#s5-hero-k", "#s5-hero-t", "#s5-hero-s"], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: d(0.5), ease: "expo.out", stagger: d(0.08) }, cut + d(0.22));
+          tl.fromTo("#s5-cta", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: d(0.45), ease: "back.out(1.6)" }, cut + d(0.45));
+          ["#s5-card1", "#s5-card2", "#s5-card3"].forEach((c, i) => {
+            tl.fromTo(c, { opacity: 0, y: 70, rotationX: -25, transformPerspective: 900 }, { opacity: 1, y: 0, rotationX: 0, transformPerspective: 900, duration: d(0.55), ease: "expo.out" }, L("mawqi") + d(0.08) * i);
+            tl.fromTo(c + " .bar i", { scaleX: 0 }, { scaleX: 0.35 + i * 0.25, duration: d(0.9), ease: "power2.out" }, L("mawqi") + d(0.3) + d(0.08) * i);
+          });
+          // glass glare sweep on «موقع»
+          tl.fromTo("#s5-glare", { "--gx": "120%" }, { "--gx": "-20%", duration: d(0.9), ease: "power2.inOut" }, L("mawqi"));
+
+          // ---- cursor glides to «سجّل الآن» and clicks on «الإلكتروني»
+          const ctaX = 460, ctaY = 74 + 84 + 272; // centre of the CTA inside the window (chrome + nav + hero offset)
+          const click = L("alilektroni") + d(0.1);
+          tl.fromTo("#s5-cursor", { x: 820, y: 900, opacity: 0 }, { x: 820, y: 900, opacity: 1, duration: d(0.2) }, L("mawqi") + d(0.2));
+          tl.to("#s5-cursor", { x: ctaX + 30, y: ctaY + 10, duration: click - (L("mawqi") + d(0.45)), ease: "power2.inOut" }, L("mawqi") + d(0.45));
+          tl.to("#s5-cursor", { scale: 0.86, duration: d(0.08), yoyo: true, repeat: 1, ease: "power1.inOut", transformOrigin: "10% 5%" }, click);
+          tl.to("#s5-cta", { scale: 0.93, duration: d(0.08), yoyo: true, repeat: 1, ease: "power1.inOut" }, click);
+          tl.fromTo("#s5-click", { scale: 0.4, opacity: 1 }, { scale: 3.2, opacity: 0, duration: d(0.5), ease: "power2.out", immediateRender: false }, click);
+          tl.fromTo("#s5-cta-done", { opacity: 0 }, { opacity: 1, duration: d(0.2), ease: "power1.out" }, click + d(0.18));
+          tl.fromTo("#s5-cta", { boxShadow: "0 0 34px rgba(63,224,255,0.7)" }, { boxShadow: "0 0 70px rgba(124,255,178,0.95)", duration: d(0.3), ease: "power2.out", immediateRender: false }, click + d(0.18));
+
+          // ---- headline, word-synced
+          const w = Array.from(document.querySelectorAll("#s5-line .w"));
+          A.wordsIn(tl, w, ["abra", "mawqi", "almutamar3", "alilektroni"].map((c) => L(c) - d(0.05)), { y: 30, blur: 12, duration: d(0.45) });
+
+          // ---- exit: collapse to a point of light, then warp
+          const x0 = end - d(0.36);
+          tl.to("#s5-text", { opacity: 0, y: -40, filter: "blur(8px)", duration: d(0.3), ease: "power2.in" }, x0 - d(0.06));
+          tl.to("#s5-win", { scale: 0.04, opacity: 0, filter: "brightness(3) blur(4px)", duration: d(0.4), ease: "power3.in", transformOrigin: "50% 50%" }, x0);
+          tl.fromTo("#s5-spark", { scale: 0.2, opacity: 0 }, { scale: 6, opacity: 1, duration: d(0.38), ease: "power3.in", immediateRender: false }, x0 + d(0.04));
+          tl.to("#s5-spark", { scale: 14, opacity: 0, duration: d(0.25), ease: "power2.out" }, x0 + d(0.42));
+          tl.to("#s5-dim", { opacity: 0, duration: d(0.4) }, x0 + d(0.1));
+
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

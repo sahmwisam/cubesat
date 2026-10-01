@@ -1,0 +1,41 @@
+/* Design tokens — palette, type scale, layout safe zones (1080 x 1920, 9:16).
+   Space / technology palette with Iraqi colours used sparingly as accents. */
+:root {
+  /* space */
+  --space-black: #02040a;
+  --deep-navy: #050b1f;
+  --navy: #0a1838;
+  --dark-blue: #0e2a5c;
+  --electric-blue: #2e7bff;
+  --cyan: #3fe0ff;
+  --cyan-soft: #8ff0ff;
+  --ice: #cfeeff;
+  --white: #f4f8ff;
+  --violet: #7a5cff;
+  --violet-deep: #2a1b6b;
+
+  /* Iraqi flag (accent only — never a full-screen fill) */
+  --iq-red: #ce1126;
+  --iq-white: #ffffff;
+  --iq-black: #111111;
+  --iq-green: #007a3d;
+
+  /* glows */
+  --glow-cyan: 0 0 18px rgba(63, 224, 255, 0.55), 0 0 46px rgba(46, 123, 255, 0.35);
+  --glow-soft: 0 0 24px rgba(143, 240, 255, 0.28);
+  --glow-text: 0 0 22px rgba(63, 224, 255, 0.35), 0 2px 18px rgba(2, 4, 10, 0.85);
+
+  /* type scale (px at 1080 wide — phone-first, in-feed sizes) */
+  --fs-hero: 118px;
+  --fs-title: 96px;
+  --fs-h2: 78px;
+  --fs-h3: 60px;
+  --fs-body: 46px;
+  --fs-label: 30px;
+  --fs-micro: 24px;
+
+  /* safe zones for Reels / TikTok UI chrome */
+  --safe-top: 250px;
+  --safe-bottom: 420px;
+  --safe-x: 90px;
+}

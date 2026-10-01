@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- SCENE 06 — FINAL CALL
+         VO: «قدّم فكرتك، واجعل الابتكار جزءًا من هذه الرحلة. نلتقي لنصنع المستقبل»
+         The engineer stands before a big Earth while the sun breaks over the limb
+         and a satellite passes; the camera keeps pushing forward. The VO's own
+         closing line is the main text («المستقبل» emphasised), then the clean
+         lockup: conference title → Iraqi tricolour hairline + union name, with a
+         light sweep and a visor glint. -->
+  </head>
+  <body>
+    <template id="scene-06-final-template">
+      <style>
+        [data-composition-id="scene-06-final"] { position: absolute; inset: 0; overflow: hidden; }
+        #s6-cam { position: absolute; inset: 0; }
+        #s6-earth { position: absolute; left: -1009px; top: 931px; } /* centre (760,2700), r 1450: horizon peaks at y=1250 */
+        #s6-sun { position: absolute; left: -300px; top: 1040px; width: 900px; height: 700px; border-radius: 50%;
+          background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95), rgba(255, 246, 228, 0.6) 14%, rgba(143, 240, 255, 0.32) 38%, rgba(46, 123, 255, 0.1) 65%, transparent 100%); mix-blend-mode: screen; }
+        #s6-rays { position: absolute; left: -750px; top: 490px; width: 1800px; height: 1800px; opacity: 0.5; mix-blend-mode: screen;
+          background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(191, 246, 255, 0.10) 0deg 3deg, transparent 3deg 14deg);
+          mask-image: radial-gradient(closest-side, #000 0%, rgba(0, 0, 0, 0.5) 40%, transparent 72%); -webkit-mask-image: radial-gradient(closest-side, #000 0%, rgba(0, 0, 0, 0.5) 40%, transparent 72%); }
+        #s6-flare { position: absolute; left: -830px; top: 1388px; width: 2300px; height: 5px; border-radius: 4px; opacity: 0.85; mix-blend-mode: screen;
+          background: linear-gradient(90deg, transparent 0%, rgba(143, 240, 255, 0.4) 20%, #ffffff 34%, rgba(143, 240, 255, 0.4) 50%, transparent 75%); box-shadow: 0 0 22px 6px rgba(63, 224, 255, 0.35); }
+        #s6-sat { position: absolute; left: 0; top: 0; width: 520px; height: 260px; margin: -130px 0 0 -260px; }
+        #s6-trail { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+        #s6-char { position: absolute; left: 330px; top: 846px; width: 432px; height: 1080px; }
+        #s6-char svg { width: 100%; height: 100%; display: block; overflow: visible; }
+        #s6-glint { position: absolute; left: 0; top: 0; width: 120px; height: 120px; margin: -60px 0 0 -60px; opacity: 0; }
+        #s6-text { position: absolute; left: 60px; right: 60px; top: 262px; height: 600px; text-align: center; }
+        #s6-a { position: absolute; left: 0; right: 0; top: 20px; }
+        #s6-a1 { font-size: 112px; line-height: 1.15; }
+        #s6-a2 { margin-top: 14px; font-size: 56px; line-height: 1.3; color: var(--ice); }
+        #s6-b { position: absolute; left: 0; right: 0; top: 0; }
+        #s6-b1 { font-size: 82px; line-height: 1.2; }
+        #s6-b2 { font-size: 150px; line-height: 1.08; margin-top: 8px; }
+        #s6-text .w { display: inline-block; }
+        #s6-lock { position: absolute; left: 0; right: 0; top: 336px; display: flex; flex-direction: column; align-items: center; }
+        #s6-lock-t { font-size: 52px; line-height: 1.28; color: var(--white); }
+        #s6-lock-u { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 20px; }
+        #s6-lock-name { font-size: 42px; color: var(--ice); }
+      </style>
+
+      <div data-composition-id="scene-06-final" data-width="1080" data-height="1920">
+        <div id="s6-cam">
+          <div id="s6-rays"></div>
+          <svg id="s6-trail" viewBox="0 0 1080 1920"></svg>
+          <div id="s6-sat"></div>
+          <div id="s6-earth" data-layout-allow-overflow></div>
+          <div id="s6-sun"></div>
+          <div id="s6-flare"></div>
+          <div id="s6-char"></div>
+          <svg id="s6-glint" viewBox="-60 -60 120 120"><path d="M0 -58 L6 -6 L58 0 L6 6 L0 58 L-6 6 L-58 0 L-6 -6 Z" fill="#ffffff"/><circle r="10" fill="#ffffff"/><circle r="26" fill="#8ff0ff" opacity="0.35"/></svg>
+        </div>
+        <div id="s6-text">
+          <div id="s6-a">
+            <div id="s6-a1" class="ar w-strong glow-text"><span class="w">قدّم</span> <span class="w accent w-strong">فكرتك</span></div>
+            <div id="s6-a2" class="ar glow-text"><span class="w">واجعل</span> <span class="w accent">الابتكار</span> <span class="w">جزءًا</span> <span class="w">من هذه</span> <span class="w">الرحلة</span></div>
+          </div>
+          <div id="s6-b">
+            <div id="s6-b1" class="ar glow-text"><span class="w" data-layout-allow-overlap>نلتقي</span> <span class="w" data-layout-allow-overlap>لنصنع</span></div>
+            <div id="s6-b2" class="ar w-strong"><span class="w accent w-strong" id="s6-future" data-layout-allow-overlap>المستقبل</span></div>
+          </div>
+          <div id="s6-lock">
+            <div id="s6-lock-t" class="ar glow-text"><div>المؤتمر السنوي لتكنولوجيا الفضاء</div><div>والأقمار الاصطناعية</div></div>
+            <div id="s6-lock-u"><div id="s6-hair"></div><div id="s6-lock-name" class="ar glow-text">نقابة المهندسين العراقيين</div></div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const ID = "scene-06-final";
+          const T = REEL.timing.get();
+          const S = T.scenes[ID];
+          const L = (c) => T.local(ID, c);
+          const d = T.d;
+          const cut = S.start - S.hostStart;
+          const dur = S.hostDuration;
+          const A = REEL.anim;
+          const q = (s) => document.querySelector(s);
+          const tl = gsap.timeline({ paused: true });
+
+          q("#s6-char").innerHTML = REEL.astronaut.build("s6a", {});
+          const rig = REEL.astronaut.rig(q("#s6a"), "s6a");
+          const earth = REEL.earth.create(q("#s6-earth"), { id: "s6e", r: 1450, dots: true });
+          q("#s6-sat").innerHTML = REEL.satellite.build("s6s");
+          q("#s6-hair").innerHTML = REEL.iraqFlag.hairline(160);
+
+          // ---- per-frame: pose, Earth spin, satellite pass, visor glint position
+          const P = { invite: 0 };
+          const V = gsap.timeline({ paused: true });
+          const pose = { headYaw: -0.12, headTilt: -4, bodyYaw: -0.05, armR: { sh: 14, el: -12, fs: 0.9 }, armL: { sh: -16, el: 14, fs: 0.92 }, legR: 3.5, legL: -2, kneeR: -2, lights: 1 };
+          A.clock(tl, dur, (t) => {
+            V.totalTime(t, true);
+            const k = P.invite;
+            // "submit your idea": the hand comes forward toward the viewer
+            // (forearm foreshortens) instead of swinging sideways
+            pose.armR.sh = 14 + 9 * k + Math.sin(t * 1.2) * 1.2;
+            pose.armR.el = -12 + 6 * k;
+            pose.armR.fs = 0.9 - 0.3 * k;
+            pose.armL.sh = -16 - Math.sin(t * 1.1 + 1) * 1.2;
+            pose.headTilt = -4 + Math.sin(t * 0.8) * 0.8;
+            rig.set(pose);
+            q("#s6-char").style.transform = `translate(0px, ${(Math.sin(t * 1.6) * 6).toFixed(2)}px)`;
+            earth.update({ lambda: -30 - t * 2.2, phi: -42, gamma: -14, pulse: (t * 0.7) % 1, marker: 1 });
+            // satellite glides in from the right and settles low over the horizon,
+            // clear of the engineer and the lockup, with a light trail
+            const u = t / dur;
+            const path = (uu) => [1260 - 400 * (1 - Math.pow(1 - uu, 2)), 1040 + 130 * uu - Math.sin(uu * Math.PI) * 45];
+            const [sx, sy] = path(u);
+            q("#s6-sat").style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px) scale(0.4) rotate(${(-8 + 6 * u).toFixed(2)}deg)`;
+            let tr = "";
+            for (let i = 1; i <= 16; i++) { const [px, py] = path(Math.max(0, u - i * 0.014)); tr += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${(4.6 - i * 0.25).toFixed(2)}" fill="#8ff0ff" opacity="${(0.6 - i * 0.035).toFixed(3)}"/>`; }
+            q("#s6-trail").innerHTML = tr;
+            document.querySelectorAll(".s6s-blink").forEach((el, i) => el.setAttribute("opacity", Math.sin(t * 6 + i * 2) > 0 ? 1 : 0.2));
+          });
+          V.fromTo(P, { invite: 0 }, { invite: 1, duration: d(0.6), ease: "power2.inOut" }, L("qaddim") - d(0.1));
+          V.to(P, { invite: 0, duration: d(0.9), ease: "power2.inOut" }, L("alrihla"));
+
+          // ---- entrance: out of the light point (bright, soft, slightly close) + camera push
+          tl.fromTo("#s6-cam", { filter: "brightness(2.2) blur(10px)", scale: 1.14, opacity: 0 }, { filter: "brightness(1) blur(0px)", scale: 1.0, opacity: 1, duration: d(0.9), ease: "expo.out", transformOrigin: "50% 46%" }, cut - d(0.15));
+          tl.to("#s6-cam", { scale: 1.075, duration: dur - (cut + d(0.75)), ease: "sine.inOut", immediateRender: false }, cut + d(0.75));
+          tl.fromTo("#s6-earth", { y: 120 }, { y: 0, duration: dur, ease: "power2.out" }, 0);
+          // sunrise over the limb: grows through the scene
+          tl.fromTo("#s6-sun", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1.12, duration: dur, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+          tl.fromTo("#s6-rays", { rotation: -6, opacity: 0.2 }, { rotation: 8, opacity: 0.55, duration: dur, ease: "none" }, 0);
+          tl.fromTo("#s6-flare", { scaleX: 0.5, opacity: 0.3 }, { scaleX: 1, opacity: 0.85, duration: dur * 0.6, ease: "sine.out" }, 0);
+          tl.fromTo("#s6-char", { opacity: 0 }, { opacity: 1, duration: d(0.5) }, cut);
+
+          // ---- phase A: «قدّم فكرتك» / «واجعل الابتكار جزءًا من هذه الرحلة»
+          const a1 = Array.from(document.querySelectorAll("#s6-a1 .w"));
+          const a2 = Array.from(document.querySelectorAll("#s6-a2 .w"));
+          A.wordsIn(tl, a1, [L("qaddim"), L("fikrataka")].map((x) => x - d(0.05)), { y: 34, blur: 14, duration: d(0.5) });
+          A.wordsIn(tl, a2, ["wajal", "alibtikar", "juzan", "min_hadhihi", "alrihla"].map((c) => L(c) - d(0.05)), { y: 22, blur: 10, duration: d(0.42) });
+          A.out(tl, "#s6-a", L("naltaqi") - d(0.32), { y: -46, blur: 12, duration: d(0.3) });
+
+          // ---- phase B: the VO's closing line — «نلتقي لنصنع» + big «المستقبل»
+          const b1 = Array.from(document.querySelectorAll("#s6-b1 .w"));
+          A.wordsIn(tl, b1, [L("naltaqi"), L("linasna")].map((x) => x - d(0.05)), { y: 30, blur: 12, duration: d(0.45) });
+          const gf = A.baseFilter(q("#s6-future"));
+          tl.fromTo("#s6-future", { opacity: 0, scale: 1.6, filter: "blur(22px)" + gf }, { opacity: 1, scale: 1, filter: "blur(0px)" + gf, duration: d(0.7), ease: "expo.out" }, L("almustaqbal") - d(0.06));
+          const fs = A.addSweep(q("#s6-future"), "rgba(255,255,255,0.95)");
+          A.sweep(tl, fs, L("almustaqbal") + d(0.35), d(0.75));
+
+          // ---- phase C: lockup — title, then hairline + union, light sweep
+          const lk = T.cue("lockup") - S.hostStart;
+          tl.fromTo("#s6-lock-t", { opacity: 0, y: 26, filter: "blur(10px)", scale: 0.96 }, { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: d(0.6), ease: "expo.out" }, lk);
+          tl.fromTo("#s6-hair", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: d(0.55), ease: "expo.out" }, lk + d(0.28));
+          tl.fromTo("#s6-lock-name", { opacity: 0, y: 16, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: d(0.55), ease: "power3.out" }, lk + d(0.36));
+          const ls = A.addSweep(q("#s6-lock-t"), "rgba(255,255,255,0.9)");
+          A.sweep(tl, ls, lk + d(0.55), d(0.85));
+          const ns = A.addSweep(q("#s6-lock-name"), "rgba(255,255,255,0.9)");
+          A.sweep(tl, ns, lk + d(0.75), d(0.75));
+          // the closing line steps up a little to make room for the lockup
+          tl.to("#s6-b", { y: -18, scale: 0.9, duration: d(0.5), ease: "power2.out", transformOrigin: "50% 0%" }, lk);
+
+          // ---- final light: visor glint near the end
+          const helmet = { x: 330 + 300 * 0.72 - 60, y: 846 + 150 * 0.72 };
+          tl.set("#s6-glint", { x: helmet.x, y: helmet.y }, 0);
+          tl.fromTo("#s6-glint", { opacity: 0, scale: 0.2, rotation: -20 }, { opacity: 1, scale: 1, rotation: 25, duration: d(0.35), ease: "power2.out", immediateRender: false }, dur - d(0.95));
+          tl.to("#s6-glint", { opacity: 0, scale: 0.4, rotation: 45, duration: d(0.4), ease: "power2.in" }, dur - d(0.6));
+
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

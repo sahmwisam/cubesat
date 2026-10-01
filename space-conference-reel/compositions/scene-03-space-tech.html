@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- SCENE 03 — SPACE TECHNOLOGY
+         VO: «لبحث أحدث التقنيات ومناقشة مستقبل الفضاء»
+         Continues the dive from scene 02's LED screen: the camera pulls back from
+         the Earth into an orbital HUD view — rotating globe (Iraq outlined,
+         Baghdad marker), orbital rings, a CubeSat orbiting behind/in front of the
+         planet, telemetry, and SPACE · SATELLITES · TECHNOLOGY · INNOVATION
+         lighting up on the spoken beats. -->
+  </head>
+  <body>
+    <template id="scene-03-space-tech-template">
+      <style>
+        [data-composition-id="scene-03-space-tech"] { position: absolute; inset: 0; overflow: hidden; }
+        #s3-cam { position: absolute; inset: 0; }
+        #s3-back, #s3-front, #s3-hud { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+        #s3-earth { position: absolute; left: 3.2px; top: 723.2px; } /* centre (540,1260): 540 - 1.22R */
+        #s3-sat-b, #s3-sat-f { position: absolute; left: 0; top: 0; width: 520px; height: 260px; margin: -130px 0 0 -260px; }
+        #s3-text { position: absolute; left: 60px; right: 60px; top: 300px; text-align: center; }
+        #s3-l1 { font-size: 100px; line-height: 1.16; }
+        #s3-l2 { font-size: 112px; line-height: 1.16; margin-top: 10px; }
+        #s3-text .w { display: inline-block; }
+        #s3-keys { position: absolute; left: 60px; right: 60px; top: 618px; display: flex; justify-content: center; gap: 30px; direction: ltr; }
+        .s3-key { position: relative; font-size: 25px; letter-spacing: 0.3em; color: #cfeeff; padding-bottom: 10px; }
+        .s3-key i { position: absolute; left: 0; right: 0.3em; bottom: 0; height: 2px; background: #3fe0ff; box-shadow: 0 0 10px #3fe0ff; display: block; transform-origin: 0 50%; }
+        .s3-read { position: absolute; font-size: 22px; letter-spacing: 0.16em; line-height: 1.7; color: rgba(207, 238, 255, 0.82); direction: ltr; }
+        .s3-read b { color: #8ff0ff; font-weight: 400; }
+      </style>
+
+      <div data-composition-id="scene-03-space-tech" data-width="1080" data-height="1920">
+        <div id="s3-cam">
+          <svg id="s3-back" viewBox="0 0 1080 1920"></svg>
+          <div id="s3-sat-b"></div>
+          <div id="s3-earth"></div>
+          <svg id="s3-front" viewBox="0 0 1080 1920"></svg>
+          <div id="s3-sat-f"></div>
+          <svg id="s3-hud" viewBox="0 0 1080 1920"></svg>
+          <div class="s3-read" id="s3-read-l" data-layout-allow-occlusion style="left: 104px; top: 1546px">ORBIT&nbsp;&nbsp;<b data-layout-allow-occlusion>LEO</b><br />ALT&nbsp;&nbsp;&nbsp;&nbsp;<b data-layout-allow-occlusion>550 KM</b><br />VEL&nbsp;&nbsp;&nbsp;&nbsp;<b data-layout-allow-occlusion>7.6 KM/S</b></div>
+          <div class="s3-read" id="s3-read-r" data-layout-allow-occlusion style="left: 716px; top: 1546px; text-align: left">BAGHDAD<br />LAT&nbsp;&nbsp;<b data-layout-allow-occlusion>33.31° N</b><br />LON&nbsp;&nbsp;<b data-layout-allow-occlusion>44.36° E</b></div>
+        </div>
+        <div id="s3-text">
+          <div id="s3-l1" class="ar w-strong glow-text"><span class="w">أحدث</span> <span class="w">التقنيات</span></div>
+          <div id="s3-l2" class="ar w-strong glow-text"><span class="w">مستقبل</span> <span class="w accent w-strong">الفضاء</span></div>
+        </div>
+        <div id="s3-keys" class="en">
+          <div class="s3-key" id="s3-k1">SPACE<i></i></div>
+          <div class="s3-key" id="s3-k2">SATELLITES<i></i></div>
+          <div class="s3-key" id="s3-k3">TECHNOLOGY<i></i></div>
+          <div class="s3-key" id="s3-k4">INNOVATION<i></i></div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const ID = "scene-03-space-tech";
+          const T = REEL.timing.get();
+          const S = T.scenes[ID];
+          const L = (c) => T.local(ID, c);
+          const d = T.d;
+          const end = S.end - S.hostStart;
+          const cut = S.start - S.hostStart; // local time of the incoming cut
+          const A = REEL.anim;
+          const q = (s) => document.querySelector(s);
+          const tl = gsap.timeline({ paused: true });
+
+          const EC = { x: 540, y: 1260, R: 440 };
+          // continue scene 02's screen-Earth spin from the exact cut frame
+          const S2 = T.scenes["scene-02-gathering"];
+          const lamCut = (REEL.screenEarthLambda || ((x) => -30 - x * 9))(S2.end - S2.hostStart);
+          const earth = REEL.earth.create(q("#s3-earth"), { id: "s3e", r: EC.R, dots: true });
+          q("#s3-sat-b").innerHTML = REEL.satellite.build("s3sb");
+          q("#s3-sat-f").innerHTML = REEL.satellite.build("s3sf");
+
+          // orbital rings: back halves behind the planet, front halves in front
+          const RINGS = [
+            { rx: 600, ry: 150, tilt: -16, w: 2.4, o: 0.6, dash: "" },
+            { rx: 540, ry: 250, tilt: 30, w: 1.6, o: 0.35, dash: "6 10" },
+            { rx: 680, ry: 120, tilt: 8, w: 1.2, o: 0.22, dash: "2 8" },
+          ];
+          const arc = (rg, a0, a1) => {
+            const pts = [];
+            for (let i = 0; i <= 72; i++) {
+              const a = a0 + ((a1 - a0) * i) / 72;
+              pts.push(`${(EC.x + rg.rx * Math.cos(a)).toFixed(1)},${(EC.y + rg.ry * Math.sin(a)).toFixed(1)}`);
+            }
+            return "M" + pts.join(" L");
+          };
+          const ringsSvg = (front) =>
+            RINGS.map((rg) => `<path d="${front ? arc(rg, 0, Math.PI) : arc(rg, Math.PI, 2 * Math.PI)}" transform="rotate(${rg.tilt} ${EC.x} ${EC.y})"
+              stroke="#8ff0ff" stroke-opacity="${front ? rg.o : rg.o * 0.55}" stroke-width="${rg.w}" fill="none" ${rg.dash ? `stroke-dasharray="${rg.dash}"` : ""}/>`).join("");
+          q("#s3-back").innerHTML = `<g id="s3-rings-b">${ringsSvg(false)}</g><g id="s3-trail-b"></g>`;
+          q("#s3-front").innerHTML = `<g id="s3-rings-f">${ringsSvg(true)}</g><g id="s3-trail-f"></g>`;
+
+          // HUD: corner brackets, scan ring + ticks around the globe, Baghdad leader line
+          let ticks = "";
+          for (let i = 0; i < 72; i++) {
+            const a = (i / 72) * Math.PI * 2, r1 = EC.R + 46, r2 = EC.R + (i % 6 === 0 ? 62 : 54);
+            ticks += `M${(EC.x + r1 * Math.cos(a)).toFixed(1)} ${(EC.y + r1 * Math.sin(a)).toFixed(1)} L${(EC.x + r2 * Math.cos(a)).toFixed(1)} ${(EC.y + r2 * Math.sin(a)).toFixed(1)} `;
+          }
+          const br = (x, y, sx, sy) => `<path d="M${x} ${y + sy * 70} L${x} ${y} L${x + sx * 70} ${y}" stroke="#8ff0ff" stroke-width="3" fill="none" opacity="0.8"/>`;
+          q("#s3-hud").innerHTML = `
+            <g id="s3-brackets">${br(56, 236, 1, 1)}${br(1024, 236, -1, 1)}${br(56, 1760, 1, -1)}${br(1024, 1760, -1, -1)}</g>
+            <g id="s3-ticks"><path d="${ticks}" stroke="#8ff0ff" stroke-opacity="0.35" stroke-width="2"/></g>
+            <g id="s3-scan"><circle cx="${EC.x}" cy="${EC.y}" r="${EC.R + 30}" fill="none" stroke="#3fe0ff" stroke-width="3" stroke-dasharray="120 1300" stroke-linecap="round" opacity="0.8"/></g>
+            <g id="s3-leader"><path id="s3-leader-p" d="" stroke="#bff6ff" stroke-width="2" fill="none" opacity="0.8"/><circle id="s3-leader-c" r="5" fill="#bff6ff"/></g>`;
+
+          // per-frame: globe rotation, satellite orbit (+depth, occlusion), trails, HUD spin
+          const rg = RINGS[0], tilt = (rg.tilt * Math.PI) / 180;
+          const onRing = (a) => {
+            const x = rg.rx * Math.cos(a), y = rg.ry * Math.sin(a);
+            return [EC.x + x * Math.cos(tilt) - y * Math.sin(tilt), EC.y + x * Math.sin(tilt) + y * Math.cos(tilt)];
+          };
+          A.clock(tl, S.hostDuration, (t) => {
+            const g = earth.update({ lambda: lamCut - (t - cut) * 4.2, phi: -22, gamma: -8, pulse: (t * 0.8) % 1, marker: 1 });
+            const a = 2.0 - t * 0.62 * T.k; // satellite angle
+            const [x, y] = onRing(a);
+            const front = Math.sin(a) > 0;
+            const sc = 0.5 + 0.12 * Math.sin(a);
+            const rot = Math.cos(a) * -8;
+            const fEl = q("#s3-sat-f"), bEl = q("#s3-sat-b");
+            const tr = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${sc.toFixed(3)}) rotate(${rot.toFixed(2)}deg)`;
+            fEl.style.transform = tr; bEl.style.transform = tr;
+            fEl.style.opacity = front ? 1 : 0; bEl.style.opacity = front ? 0 : 0.85;
+            let tf = "", tb = "";
+            for (let i = 1; i <= 14; i++) {
+              const [px, py] = onRing(a + i * 0.045);
+              const dot = `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${(5 - i * 0.28).toFixed(2)}" fill="#8ff0ff" opacity="${(0.75 - i * 0.05).toFixed(3)}"/>`;
+              if (Math.sin(a + i * 0.045) > 0) tf += dot; else tb += dot;
+            }
+            q("#s3-trail-f").innerHTML = tf; q("#s3-trail-b").innerHTML = tb;
+            document.querySelectorAll(".s3sf-blink, .s3sb-blink").forEach((el, i) => el.setAttribute("opacity", Math.sin(t * 7 + i * 2) > 0 ? 1 : 0.2));
+            q("#s3-scan").setAttribute("transform", `rotate(${(t * 70).toFixed(2)} ${EC.x} ${EC.y})`);
+            q("#s3-ticks").setAttribute("transform", `rotate(${(-t * 6).toFixed(2)} ${EC.x} ${EC.y})`);
+            // leader line from the Baghdad readout to the marker on the globe
+            if (g.baghdad) {
+              const bx = EC.x - EC.R * 1.22 + g.baghdad[0], by = EC.y - EC.R * 1.22 + g.baghdad[1];
+              q("#s3-leader-p").setAttribute("d", `M${bx.toFixed(1)} ${by.toFixed(1)} L${(bx + 70).toFixed(1)} ${(by + 90).toFixed(1)} L776 1532`);
+              q("#s3-leader-c").setAttribute("cx", bx.toFixed(1)); q("#s3-leader-c").setAttribute("cy", by.toFixed(1));
+              q("#s3-leader").setAttribute("opacity", 1);
+            } else q("#s3-leader").setAttribute("opacity", 0);
+          });
+
+          // ---- entrance: continue the dive (start where scene 02's screen Earth was), then pull back
+          // match cut: at `cut` this Earth sits exactly where scene 02's dive ended
+          // (centre 374,694 · r 520 = 1.182 x 440), then the camera pulls back
+          tl.fromTo("#s3-cam", { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none" }, cut - 0.015);
+          // keep the dive's momentum for a beat (still zooming in, decelerating),
+          // then ease back out into the orbital view — no hard direction flip
+          const ox = 374 - EC.x, oy = 694 - EC.y;
+          tl.fromTo("#s3-cam", { scale: 520 / 440, x: ox, y: oy }, { scale: 1.3, x: ox, y: oy, duration: d(0.3), ease: "power2.out", transformOrigin: `${EC.x}px ${EC.y}px` }, cut);
+          tl.to("#s3-cam", { scale: 1, x: 0, y: 0, duration: d(1.2), ease: "power2.inOut" }, cut + d(0.3));
+          tl.fromTo("#s3-hud", { opacity: 0 }, { opacity: 1, duration: d(0.6), ease: "power2.out" }, cut + d(0.5));
+          // telemetry labels arrive once the camera has settled (never in the vignette corner)
+          tl.fromTo(["#s3-read-l", "#s3-read-r"], { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: d(0.5), ease: "power2.out" }, cut + d(1.25));
+          tl.fromTo("#s3-brackets", { scale: 1.08 }, { scale: 1, duration: d(0.8), ease: "expo.out", transformOrigin: "540px 1000px" }, cut + d(0.5));
+          tl.fromTo("#s3-cam", { rotation: 0 }, { rotation: -1.2, duration: end - cut + d(0.3), ease: "none", immediateRender: false }, cut + d(1.1));
+
+          // ---- keywords light up on the spoken beats
+          const keys = ["libahth", "ahdath", "altiqniyat", "wamunaqasha"];
+          keys.forEach((c, i) => {
+            const at = L(c) - d(0.04);
+            tl.fromTo(`#s3-k${i + 1}`, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: d(0.35), ease: "expo.out" }, at);
+            tl.fromTo(`#s3-k${i + 1} i`, { scaleX: 0 }, { scaleX: 1, duration: d(0.4), ease: "power3.out" }, at + d(0.05));
+            tl.to(`#s3-k${i + 1}`, { color: "#ffffff", textShadow: "0 0 14px rgba(63,224,255,0.9)", duration: d(0.12) }, at);
+            tl.to(`#s3-k${i + 1}`, { color: "#cfeeff", textShadow: "0 0 0px rgba(63,224,255,0)", duration: d(0.5) }, at + d(0.3));
+          });
+
+          // ---- Arabic lines, word-synced
+          const w1 = Array.from(document.querySelectorAll("#s3-l1 .w"));
+          const w2 = Array.from(document.querySelectorAll("#s3-l2 .w"));
+          A.wordsIn(tl, w1, [L("ahdath") - d(0.05), L("altiqniyat") - d(0.05)], { y: 36, blur: 14, duration: d(0.55) });
+          A.wordsIn(tl, [w2[0]], [L("mustaqbal") - d(0.05)], { y: 36, blur: 14, duration: d(0.55) });
+          const gf = A.baseFilter(w2[1]);
+          tl.fromTo(w2[1], { opacity: 0, scale: 1.4, filter: "blur(18px)" + gf }, { opacity: 1, scale: 1, filter: "blur(0px)" + gf, duration: d(0.6), ease: "expo.out" }, L("alfada2") - d(0.06));
+          const sw = A.addSweep(w2[1], "rgba(255,255,255,0.95)");
+          A.sweep(tl, sw, L("alfada2") + d(0.25), d(0.7));
+          // «أحدث التقنيات» steps back when «مستقبل الفضاء» arrives
+          tl.to("#s3-l1", { opacity: 0.55, scale: 0.9, duration: d(0.5), ease: "power2.out", transformOrigin: "50% 100%" }, L("mustaqbal") - d(0.05));
+
+          // ---- exit: everything recedes as the HUD scan of scene 04 sweeps in
+          const x0 = end - d(0.35);
+          tl.to("#s3-text", { opacity: 0, y: -50, filter: "blur(10px)", duration: d(0.35), ease: "power2.in" }, x0);
+          tl.to("#s3-keys", { opacity: 0, duration: d(0.25) }, x0);
+          tl.to("#s3-cam", { scale: 0.78, y: -120, opacity: 0, filter: "blur(8px)", duration: d(0.55), ease: "power2.in" }, x0);
+
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Deep-space background that runs under every scene: nebula + parallax
+         starfield with a camera that surges forward at each scene transition
+         (stars streak = motion blur). Pure function of time. -->
+  </head>
+  <body>
+    <template id="bg-space-template">
+      <style>
+        [data-composition-id="bg-space"] { position: absolute; inset: 0; overflow: hidden; background: #02040a; }
+        #bg-grad { position: absolute; inset: 0; background: radial-gradient(130% 85% at 50% 32%, #0b1b40 0%, #050b1f 46%, #02040a 100%); }
+        #bg-neb-wrap { position: absolute; left: -160px; top: -240px; width: 1400px; height: 2400px; will-change: transform; }
+        #bg-neb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.95; }
+        #bg-glow { position: absolute; left: -200px; top: -300px; width: 1480px; height: 1600px; background: radial-gradient(closest-side, rgba(46, 123, 255, 0.16), rgba(122, 92, 255, 0.07) 55%, transparent 100%); mix-blend-mode: screen; }
+        #bg-stars { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+      </style>
+      <div data-composition-id="bg-space" data-width="1080" data-height="1920">
+        <div id="bg-grad"></div>
+        <div id="bg-neb-wrap" data-layout-allow-overflow><img id="bg-neb" src="assets/textures/nebula.jpg" alt="" /></div>
+        <div id="bg-glow" data-layout-allow-overflow></div>
+        <canvas id="bg-stars" width="1080" height="1920"></canvas>
+      </div>
+      <script>
+        (function () {
+          const T = REEL.timing.get();
+          const { prng, smooth } = REEL.util;
+          const cv = document.getElementById("bg-stars");
+          const g = cv.getContext("2d");
+
+          // ---- camera: base drift + sech^2 surges at transitions (closed-form integral)
+          const B = T.boundaries; // video-time scene cuts
+          const surges = [
+            { c: B[0], a: 7.5, w: 0.2 }, // intro -> gathering (push-through)
+            { c: B[1], a: 3.0, w: 0.2 }, // -> space tech (screen dive)
+            { c: B[2], a: 4.5, w: 0.2 }, // -> challenge
+            { c: B[3], a: 2.5, w: 0.18 }, // -> website
+            { c: B[4], a: 8.0, w: 0.22 }, // -> final (warp)
+            { c: 0.15, a: 1.2, w: 0.5 }, // opening push
+          ];
+          const base = 0.32;
+          const sech2 = (x) => { const c = Math.cosh(x); return 1 / (c * c); };
+          const speed = (t) => base + surges.reduce((s, b) => s + b.a * sech2((t - b.c) / b.w), 0);
+          const camZ = (t) => base * t + surges.reduce((s, b) => s + b.a * b.w * (Math.tanh((t - b.c) / b.w) - Math.tanh(-b.c / b.w)), 0);
+
+          // ---- stars (uniform in screen space at spawn depth)
+          const r = prng(424242);
+          const D = 10, ZN = 0.35, F = 620, CX = 540, CY = 900;
+          const stars = [];
+          for (let i = 0; i < 720; i++) {
+            const z = ZN + r() * (D - ZN);
+            const sx = (r() * 1.6 - 0.3) * 1080, sy = (r() * 1.5 - 0.25) * 1920;
+            const hue = r();
+            stars.push({
+              x: ((sx - CX) * z) / F, y: ((sy - CY) * z) / F, z0: z,
+              b: 0.35 + Math.pow(r(), 2.2) * 0.65,
+              s: 0.55 + r() * 0.9,
+              tw: 1.5 + r() * 3.5, ph: r() * 6.283,
+              col: hue < 0.12 ? "143,240,255" : hue < 0.2 ? "190,170,255" : hue < 0.3 ? "255,236,214" : "235,244,255",
+            });
+          }
+          // soft foreground dust (bokeh), slow
+          const dust = [];
+          for (let i = 0; i < 26; i++) dust.push({ x: r() * 1080, y: r() * 1920, rad: 6 + r() * 22, a: 0.04 + r() * 0.08, vx: (r() - 0.5) * 10, vy: -4 - r() * 10, ph: r() * 6.28 });
+
+          function draw(t) {
+            const cz = camZ(t), sp = speed(t);
+            const blurZ = Math.min(4.5, sp * (1.6 / 30)); // shutter ~1.6 frames
+            const roll = (t / T.duration) * 0.05 - 0.02;
+            const cr = Math.cos(roll), sr = Math.sin(roll);
+            g.clearRect(0, 0, 1080, 1920);
+            g.globalCompositeOperation = "lighter";
+            for (const st of stars) {
+              let z = st.z0 - cz;
+              z = ((((z - ZN) % (D - ZN)) + (D - ZN)) % (D - ZN)) + ZN;
+              const xr = st.x * cr - st.y * sr, yr = st.x * sr + st.y * cr;
+              const px = CX + (xr * F) / z, py = CY + (yr * F) / z;
+              if (px < -60 || px > 1140 || py < -60 || py > 1980) continue;
+              const z2 = Math.min(D, z + blurZ);
+              const qx = CX + (xr * F) / z2, qy = CY + (yr * F) / z2;
+              const fade = smooth((D - z) / 2.2);
+              const tw = 0.78 + 0.22 * Math.sin(t * st.tw + st.ph);
+              const a = Math.min(1, st.b * fade * tw * (0.55 + 1.6 / z));
+              const size = Math.min(3.4, st.s * (0.6 + 1.5 / z));
+              const len = Math.hypot(px - qx, py - qy);
+              if (len > 1.2) {
+                const gr = g.createLinearGradient(qx, qy, px, py);
+                gr.addColorStop(0, `rgba(${st.col},0)`);
+                gr.addColorStop(1, `rgba(${st.col},${a.toFixed(3)})`);
+                g.strokeStyle = gr;
+                g.lineWidth = size;
+                g.lineCap = "round";
+                g.beginPath(); g.moveTo(qx, qy); g.lineTo(px, py); g.stroke();
+              } else {
+                g.fillStyle = `rgba(${st.col},${a.toFixed(3)})`;
+                g.beginPath(); g.arc(px, py, size * 0.62, 0, 6.283); g.fill();
+                if (st.b > 0.85 && z < 3) { // sparkle on the brightest near stars
+                  g.fillStyle = `rgba(${st.col},${(a * 0.18).toFixed(3)})`;
+                  g.beginPath(); g.arc(px, py, size * 3.2, 0, 6.283); g.fill();
+                }
+              }
+            }
+            for (const d of dust) {
+              const x = (((d.x + d.vx * t) % 1180) + 1180) % 1180 - 50, y = (((d.y + d.vy * t) % 2020) + 2020) % 2020 - 50;
+              const a = d.a * (0.7 + 0.3 * Math.sin(t * 0.8 + d.ph));
+              const gr = g.createRadialGradient(x, y, 0, x, y, d.rad);
+              gr.addColorStop(0, `rgba(170,220,255,${a.toFixed(3)})`);
+              gr.addColorStop(1, "rgba(170,220,255,0)");
+              g.fillStyle = gr; g.beginPath(); g.arc(x, y, d.rad, 0, 6.283); g.fill();
+            }
+            g.globalCompositeOperation = "source-over";
+            // nebula drifts and slowly grows with the camera
+            const neb = document.getElementById("bg-neb-wrap");
+            neb.style.transform = `translate(${(-t * 3).toFixed(2)}px, ${(-t * 6).toFixed(2)}px) scale(${(1 + cz * 0.006).toFixed(4)})`;
+          }
+
+          const tl = gsap.timeline({ paused: true });
+          REEL.anim.clock(tl, T.duration, draw);
+          window.__timelines["bg-space"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

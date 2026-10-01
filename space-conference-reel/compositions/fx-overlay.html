@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Lens/finishing layer above every scene: vignette, film grain, transition
+         flashes and anamorphic light streaks. Subtle by design. -->
+  </head>
+  <body>
+    <template id="fx-overlay-template">
+      <style>
+        [data-composition-id="fx-overlay"] { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+        #fx-vignette { position: absolute; inset: 0; background: radial-gradient(118% 82% at 50% 46%, transparent 55%, rgba(2, 4, 10, 0.36) 84%, rgba(2, 4, 10, 0.64) 100%); }
+        #fx-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.055; mix-blend-mode: overlay; }
+        #fx-flash { position: absolute; inset: 0; opacity: 0; background: radial-gradient(60% 45% at 50% 46%, rgba(235, 252, 255, 0.95), rgba(63, 224, 255, 0.45) 45%, rgba(46, 123, 255, 0) 100%); mix-blend-mode: screen; }
+        .fx-streak { position: absolute; left: -540px; width: 2160px; height: 3px; opacity: 0; border-radius: 3px;
+          background: linear-gradient(90deg, rgba(63, 224, 255, 0) 0%, rgba(143, 240, 255, 0.55) 30%, #ffffff 50%, rgba(143, 240, 255, 0.55) 70%, rgba(63, 224, 255, 0) 100%);
+          box-shadow: 0 0 18px 4px rgba(63, 224, 255, 0.45); mix-blend-mode: screen; }
+        .fx-orb { position: absolute; left: 0; width: 180px; height: 180px; margin: -90px 0 0 -90px; border-radius: 50%; opacity: 0;
+          background: radial-gradient(closest-side, rgba(255, 255, 255, 0.9), rgba(143, 240, 255, 0.35) 40%, transparent 100%); mix-blend-mode: screen; }
+      </style>
+      <div data-composition-id="fx-overlay" data-width="1080" data-height="1920">
+        <div id="fx-vignette"></div>
+        <div id="fx-flash"></div>
+        <div id="fx-streak-a" class="fx-streak"></div>
+        <div id="fx-orb-a" class="fx-orb"></div>
+        <div id="fx-streak-b" class="fx-streak"></div>
+        <div id="fx-orb-b" class="fx-orb"></div>
+        <canvas id="fx-grain" width="540" height="960"></canvas>
+      </div>
+      <script>
+        (function () {
+          const T = REEL.timing.get();
+          const tl = gsap.timeline({ paused: true });
+          const B = T.boundaries;
+
+          // transition flashes (strong on the two warps, gentle elsewhere)
+          const flashes = [[B[0], 0.55], [B[1], 0.35], [B[2], 0.3], [B[3], 0.22], [B[4], 0.65]];
+          flashes.forEach(([c, a]) => {
+            tl.fromTo("#fx-flash", { opacity: 0 }, { opacity: a, duration: T.d(0.12), ease: "power2.in", immediateRender: false }, c - T.d(0.12));
+            tl.to("#fx-flash", { opacity: 0, duration: T.d(0.45), ease: "power2.out" }, c);
+          });
+
+          // anamorphic streaks on the two big title moments (+ the final lockup)
+          function streak(id, orb, t, y) {
+            tl.set(["#" + id, "#" + orb], { top: y }, 0);
+            tl.fromTo("#" + id, { opacity: 0, scaleX: 0.2, x: -260 }, { opacity: 0.9, scaleX: 1, x: 0, duration: T.d(0.35), ease: "expo.out", immediateRender: false }, t);
+            tl.to("#" + id, { opacity: 0, x: 260, duration: T.d(0.6), ease: "power2.in" }, t + T.d(0.35));
+            tl.fromTo("#" + orb, { opacity: 0, scale: 0.4, x: 380 }, { opacity: 0.85, scale: 1, x: 700, duration: T.d(0.5), ease: "power2.out", immediateRender: false }, t);
+            tl.to("#" + orb, { opacity: 0, x: 860, duration: T.d(0.5), ease: "power2.in" }, t + T.d(0.5));
+          }
+          streak("fx-streak-a", "fx-orb-a", T.cue("almutamar"), 372); // on title line 1
+          streak("fx-streak-b", "fx-orb-b", T.cue("lockup") + T.d(0.25), 640); // on the final lockup title
+
+          // film grain: a seeded procedural tile (built synchronously, so every
+          // frame is deterministic) re-offset every frame
+          const cv = document.getElementById("fx-grain");
+          const g = cv.getContext("2d");
+          const r = REEL.util.prng(99);
+          const tile = document.createElement("canvas");
+          tile.width = tile.height = 256;
+          const tg = tile.getContext("2d");
+          const id = tg.createImageData(256, 256);
+          for (let i = 0; i < 256 * 256; i++) {
+            const v = Math.max(0, Math.min(255, 128 + (r() + r() + r() - 1.5) * 120));
+            id.data[i * 4] = id.data[i * 4 + 1] = id.data[i * 4 + 2] = v;
+            id.data[i * 4 + 3] = 255;
+          }
+          tg.putImageData(id, 0, 0);
+          const pattern = g.createPattern(tile, "repeat");
+          const offs = Array.from({ length: 64 }, () => [Math.floor(r() * 256), Math.floor(r() * 256)]);
+          function grain(t) {
+            const f = Math.floor(t * 30) % offs.length;
+            g.save();
+            g.clearRect(0, 0, 540, 960);
+            g.translate(-offs[f][0], -offs[f][1]);
+            g.fillStyle = pattern;
+            g.fillRect(0, 0, 540 + 256, 960 + 256);
+            g.restore();
+          }
+          REEL.anim.clock(tl, T.duration, grain);
+          window.__timelines["fx-overlay"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

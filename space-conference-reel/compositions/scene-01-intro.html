@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- SCENE 01 — INTRO
+         VO: «رحلة جديدة تبدأ من هنا. المؤتمر السنوي لتكنولوجيا الفضاء والأقمار الاصطناعية»
+         Dark space → the engineer rises as a rim-lit silhouette → lights on at «المؤتمر»
+         → word-synced cinematic title → union signature → push-through exit. -->
+  </head>
+  <body>
+    <template id="scene-01-intro-template">
+      <style>
+        [data-composition-id="scene-01-intro"] { position: absolute; inset: 0; overflow: hidden; }
+        #s1-cam { position: absolute; inset: 0; }
+        #s1-sun { position: absolute; left: 520px; top: 1180px; width: 820px; height: 560px; border-radius: 50%;
+          background: radial-gradient(closest-side, rgba(255, 255, 255, 0.85), rgba(160, 240, 255, 0.45) 22%, rgba(46, 123, 255, 0.16) 55%, transparent 100%); mix-blend-mode: screen; }
+        #s1-earth { position: absolute; left: -1191px; top: 1222px; }
+        #s1-orbit-back, #s1-orbit-front { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+        #s1-char { position: absolute; left: 270px; top: 800px; width: 540px; height: 1350px; }
+        #s1-char-float { position: absolute; inset: 0; }
+        #s1-char svg { width: 100%; height: 100%; display: block; overflow: visible; }
+        #s1-char-shadow { position: absolute; left: 50px; top: 150px; width: 440px; height: 900px; border-radius: 50%;
+          background: radial-gradient(closest-side, rgba(63, 224, 255, 0.22), rgba(46, 123, 255, 0.08) 60%, transparent 100%); }
+        #s1-text { position: absolute; left: 70px; right: 70px; top: 270px; height: 560px; display: flex; flex-direction: column; align-items: center; }
+        #s1-kicker { position: absolute; left: 0; right: 0; top: 150px; text-align: center; font-size: 74px; color: var(--white); }
+        #s1-kicker .w, #s1-title .w { display: inline-block; }
+        #s1-title { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+        #s1-l1 { font-size: 78px; color: var(--ice); line-height: 1.18; }
+        #s1-l2, #s1-l3 { font-size: 104px; line-height: 1.16; }
+        #s1-union { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+        #s1-union-name { font-size: 46px; color: var(--ice); }
+      </style>
+
+      <div data-composition-id="scene-01-intro" data-width="1080" data-height="1920">
+        <div id="s1-cam">
+          <div id="s1-sun"></div>
+          <div id="s1-earth" data-layout-allow-overflow></div>
+          <svg id="s1-orbit-back" viewBox="0 0 1080 1920"></svg>
+          <div id="s1-char"><div id="s1-char-float"><div id="s1-char-shadow"></div><div id="s1-char-svg"></div></div></div>
+          <svg id="s1-orbit-front" viewBox="0 0 1080 1920"></svg>
+          <div id="s1-text">
+            <div id="s1-kicker" class="ar glow-text">
+              <span class="w">رحلة</span> <span class="w">جديدة</span> <span class="w">تبدأ</span> <span class="w">من هنا</span>
+            </div>
+            <div id="s1-title">
+              <div id="s1-l1" class="ar glow-text"><span class="w">المؤتمر</span> <span class="w">السنوي</span></div>
+              <div id="s1-l2" class="ar w-strong glow-text"><span class="w">لتكنولوجيا</span> <span class="w accent w-strong">الفضاء</span></div>
+              <div id="s1-l3" class="ar w-strong"><span class="w accent w-strong">والأقمار الاصطناعية</span></div>
+              <div id="s1-union">
+                <div id="s1-hair"></div>
+                <div id="s1-union-name" class="ar glow-text">نقابة المهندسين العراقيين</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const ID = "scene-01-intro";
+          const T = REEL.timing.get();
+          const S = T.scenes[ID];
+          const L = (c) => T.local(ID, c);
+          const d = T.d;
+          const end = S.end - S.hostStart; // local time of the cut
+          const tl = gsap.timeline({ paused: true });
+          const A = REEL.anim;
+          const q = (s) => document.querySelector(s);
+
+          // --- build components (same character design as every scene)
+          q("#s1-char-svg").innerHTML = REEL.astronaut.build("s1a", {});
+          const rig = REEL.astronaut.rig(q("#s1a"), "s1a");
+          const earth = REEL.earth.create(q("#s1-earth"), { id: "s1e", r: 1500, dots: true });
+          q("#s1-hair").innerHTML = REEL.iraqFlag.hairline(150);
+
+          // orbit ring around the engineer: back half behind, front half in front
+          const OC = { x: 540, y: 1430, rx: 500, ry: 128, tilt: -9 };
+          const ell = (from, to) => {
+            const pts = [];
+            for (let i = 0; i <= 60; i++) {
+              const a = from + ((to - from) * i) / 60;
+              pts.push(`${(OC.x + OC.rx * Math.cos(a)).toFixed(1)},${(OC.y + OC.ry * Math.sin(a)).toFixed(1)}`);
+            }
+            return "M" + pts.join(" L");
+          };
+          q("#s1-orbit-back").innerHTML = `<g transform="rotate(${OC.tilt} ${OC.x} ${OC.y})" id="s1-ob">
+              <path d="${ell(Math.PI, 2 * Math.PI)}" stroke="#3fe0ff" stroke-opacity="0.35" stroke-width="2" fill="none" stroke-dasharray="4 10"/>
+              <circle id="s1-sat-b" r="5" fill="#bff6ff"/></g>`;
+          q("#s1-orbit-front").innerHTML = `<g transform="rotate(${OC.tilt} ${OC.x} ${OC.y})" id="s1-of">
+              <path d="${ell(0, Math.PI)}" stroke="#3fe0ff" stroke-opacity="0.55" stroke-width="2.4" fill="none"/>
+              <circle id="s1-sat-f" r="6" fill="#ffffff"/><circle id="s1-sat-fg" r="16" fill="#3fe0ff" opacity="0.25"/></g>`;
+
+          // --- procedural layer: float, earth rotation, orbiting light
+          const pose = { headTilt: -3, headYaw: 0.08, bodyYaw: 0.06, armR: { sh: 15, el: -16, fs: 0.86 }, armL: { sh: -6, el: 5, fs: 0.97 }, legR: 4, legL: -1.5, kneeR: -3, kneeL: 0.5, lights: 0 };
+          // procedural parameters live on their own timeline (V) which the
+          // per-frame clock seeks explicitly -> independent of render order
+          const P = { lights: 0, look: 0 };
+          const V = gsap.timeline({ paused: true });
+          A.clock(tl, S.hostDuration, (t) => {
+            V.totalTime(t, true);
+            const fy = Math.sin(t * 1.9) * 7, fr = Math.sin(t * 1.3 + 0.6) * 0.7;
+            q("#s1-char-float").style.transform = `translate(0px, ${fy.toFixed(2)}px) rotate(${fr.toFixed(3)}deg)`;
+            pose.lights = P.lights;
+            pose.headTilt = -2 - 3 * P.look;
+            pose.headNod = -0.6 * P.look;
+            pose.armR.sh = 15 + Math.sin(t * 1.1) * 1.4;
+            pose.armL.sh = -6 - Math.sin(t * 1.1 + 0.8) * 1.0;
+            rig.set(pose);
+            earth.update({ lambda: -36 - t * 1.6, phi: -16, gamma: -6, pulse: (t * 0.7) % 1, marker: 1 });
+            const a = 0.6 + t * 0.9; // orbit angle
+            const x = OC.rx * Math.cos(a), y = OC.ry * Math.sin(a);
+            const front = Math.sin(a) > 0;
+            q("#s1-sat-f").setAttribute("cx", OC.x + x); q("#s1-sat-f").setAttribute("cy", OC.y + y);
+            q("#s1-sat-fg").setAttribute("cx", OC.x + x); q("#s1-sat-fg").setAttribute("cy", OC.y + y);
+            q("#s1-sat-b").setAttribute("cx", OC.x + x); q("#s1-sat-b").setAttribute("cy", OC.y + y);
+            q("#s1-sat-f").setAttribute("opacity", front ? 1 : 0); q("#s1-sat-fg").setAttribute("opacity", front ? 0.25 : 0);
+            q("#s1-sat-b").setAttribute("opacity", front ? 0 : 0.55);
+          });
+
+          // --- camera: slow push for the whole scene
+          tl.fromTo("#s1-cam", { scale: 1.0 }, { scale: 1.05, duration: end, ease: "none", transformOrigin: "50% 45%" }, 0);
+
+          // --- opening: earth glow + silhouette rising
+          tl.fromTo("#s1-earth", { opacity: 0, y: 140 }, { opacity: 1, y: 0, duration: d(2.2), ease: "power2.out" }, 0);
+          tl.fromTo("#s1-sun", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: d(2.6), ease: "power2.out" }, d(0.1));
+          tl.fromTo("#s1-char", { y: 190, opacity: 0, filter: "brightness(0.08) saturate(0.6)" },
+            { y: 0, opacity: 1, filter: "brightness(0.22) saturate(0.7)", duration: d(2.1), ease: "power3.out" }, d(0.05));
+          tl.fromTo(["#s1-orbit-back", "#s1-orbit-front"], { opacity: 0 }, { opacity: 1, duration: d(1.2), ease: "sine.out" }, d(0.6));
+
+          // --- kicker: «رحلة جديدة تبدأ من هنا» word by word on the spoken words
+          const kw = Array.from(document.querySelectorAll("#s1-kicker .w"));
+          A.wordsIn(tl, kw, ["rihla", "jadida", "tabda", "min_huna"].map((c) => L(c) - d(0.06)), { y: 28, blur: 12, duration: d(0.5) });
+          A.out(tl, "#s1-kicker", L("almutamar") - d(0.3), { y: -40, blur: 12, duration: d(0.28) });
+
+          // --- lights on at «المؤتمر»
+          const on = L("almutamar");
+          tl.to("#s1-char", { filter: "brightness(1) saturate(1)", duration: d(0.75), ease: "power2.out" }, on - d(0.05));
+          V.fromTo(P, { lights: 0 }, { lights: 1, duration: d(0.6), ease: "steps(6)" }, on);
+          V.fromTo(P, { look: 0 }, { look: 1, duration: d(1.2), ease: "sine.inOut", immediateRender: false }, L("alfada") - d(0.3));
+          tl.fromTo("#s1-char-shadow", { opacity: 0 }, { opacity: 1, duration: d(0.8) }, on);
+
+          // --- title, word-synced
+          const t1 = Array.from(document.querySelectorAll("#s1-l1 .w"));
+          const t2 = Array.from(document.querySelectorAll("#s1-l2 .w"));
+          const t3 = Array.from(document.querySelectorAll("#s1-l3 .w"));
+          A.wordsIn(tl, t1, [L("almutamar") - d(0.05), L("alsanawi") - d(0.05)], { y: 40, blur: 16, duration: d(0.6) });
+          A.wordsIn(tl, t2, [L("litiknulujya") - d(0.05)], { y: 0, blur: 18, scale: 1.18, duration: d(0.65) });
+          // «الفضاء» lands with a little extra punch + glow bloom
+          const g2 = A.baseFilter(t2[1]);
+          tl.fromTo(t2[1], { opacity: 0, scale: 1.35, filter: "blur(18px)" + g2 }, { opacity: 1, scale: 1, filter: "blur(0px)" + g2, duration: d(0.55), ease: "expo.out" }, L("alfada") - d(0.06));
+          tl.fromTo(t2[1], { textShadow: "0 0 0px rgba(63,224,255,0)" }, { textShadow: "0 0 34px rgba(63,224,255,0.9)", duration: d(0.25), yoyo: true, repeat: 1, ease: "sine.inOut" }, L("alfada") + d(0.1));
+          // «والأقمار الاصطناعية» opens from the centre like an aperture
+          tl.fromTo("#s1-l3", { clipPath: "inset(0% 50% 0% 50%)", opacity: 1 }, { clipPath: "inset(0% 0% 0% 0%)", duration: d(0.9), ease: "expo.out" }, L("walaqmar") - d(0.04));
+          const g3 = A.baseFilter(t3[0]);
+          tl.fromTo(t3[0], { opacity: 0, filter: "blur(10px)" + g3, scale: 1.06 }, { opacity: 1, filter: "blur(0px)" + g3, scale: 1, duration: d(0.7), ease: "expo.out" }, L("walaqmar") - d(0.04));
+          const sw = A.addSweep(document.querySelector("#s1-l3 .w"), "rgba(255,255,255,0.95)");
+          A.sweep(tl, sw, L("alistinaiya") + d(0.05), d(0.85));
+
+          // --- union signature (tricolor hairline draws from centre)
+          const ut = L("walaqmar") + d(0.25);
+          tl.fromTo("#s1-hair", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: d(0.6), ease: "expo.out" }, ut);
+          tl.fromTo("#s1-union-name", { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: d(0.6), ease: "power3.out" }, ut + d(0.12));
+
+          // --- push-through exit into scene 02
+          const x0 = end - d(0.4);
+          tl.to("#s1-text", { scale: 1.75, opacity: 0, filter: "blur(16px)", duration: d(0.55), ease: "power2.in", transformOrigin: "50% 40%" }, x0);
+          tl.to("#s1-char", { scale: 1.45, y: 260, opacity: 0, duration: d(0.55), ease: "power2.in", transformOrigin: "50% 30%" }, x0);
+          tl.to(["#s1-earth", "#s1-sun"], { y: 420, scale: 1.2, opacity: 0, duration: d(0.6), ease: "power2.in" }, x0);
+          tl.to(["#s1-orbit-back", "#s1-orbit-front"], { opacity: 0, scale: 1.5, duration: d(0.45), ease: "power2.in", transformOrigin: "50% 65%" }, x0);
+
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>
