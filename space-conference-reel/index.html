@@ -17,7 +17,7 @@
     <script src="src/utils/prng.js"></script>
     <script src="src/utils/anim.js"></script>
     <script src="src/timing.js"></script>
-    <script src="src/components/astronaut.js"></script>
+    <script src="src/components/engineer.js"></script>
     <script src="src/components/earth.js"></script>
     <script src="src/components/satellite.js"></script>
     <script src="src/components/iraq-flag.js"></script>
@@ -41,31 +41,36 @@
       <div id="el-bg" class="scene-host" data-composition-id="bg-space" data-composition-src="compositions/bg-space.html"
         data-start="0" data-duration="20.000" data-track-index="0" style="z-index:0"></div>
       <div id="el-s1" class="scene-host" data-composition-id="scene-01-intro" data-composition-src="compositions/scene-01-intro.html"
-        data-start="0.000" data-duration="4.704" data-track-index="1" style="z-index:10"></div>
+        data-start="0.000" data-duration="4.369" data-track-index="1" style="z-index:10"></div>
       <div id="el-s2" class="scene-host" data-composition-id="scene-02-gathering" data-composition-src="compositions/scene-02-gathering.html"
-        data-start="4.204" data-duration="3.064" data-track-index="2" style="z-index:11"></div>
+        data-start="3.869" data-duration="3.498" data-track-index="2" style="z-index:11"></div>
       <div id="el-s3" class="scene-host" data-composition-id="scene-03-space-tech" data-composition-src="compositions/scene-03-space-tech.html"
-        data-start="6.769" data-duration="3.437" data-track-index="3" style="z-index:12"></div>
+        data-start="6.867" data-duration="3.113" data-track-index="3" style="z-index:12"></div>
       <div id="el-s4" class="scene-host" data-composition-id="scene-04-challenge" data-composition-src="compositions/scene-04-challenge.html"
-        data-start="9.705" data-duration="4.050" data-track-index="4" style="z-index:13"></div>
+        data-start="9.480" data-duration="4.097" data-track-index="4" style="z-index:13"></div>
       <div id="el-s5" class="scene-host" data-composition-id="scene-05-website" data-composition-src="compositions/scene-05-website.html"
-        data-start="13.255" data-duration="2.778" data-track-index="5" style="z-index:14"></div>
+        data-start="13.077" data-duration="2.510" data-track-index="5" style="z-index:14"></div>
       <div id="el-s6" class="scene-host" data-composition-id="scene-06-final" data-composition-src="compositions/scene-06-final.html"
-        data-start="15.533" data-duration="4.467" data-track-index="6" style="z-index:15"></div>
+        data-start="15.088" data-duration="4.912" data-track-index="6" style="z-index:15"></div>
       <div id="el-fx" class="scene-host" data-composition-id="fx-overlay" data-composition-src="compositions/fx-overlay.html"
         data-start="0" data-duration="20.000" data-track-index="9" style="z-index:100"></div>
 
-      <!-- Voice-over: the ORIGINAL file, never modified on disk. The bus applies a
-           transparent broadcast chain (rumble cut, gentle compression, level,
-           peak ceiling) so the voice sits at ~-16.5 LUFS, well above the score. -->
+      <!-- Voice-over: the ElevenLabs take (assets/audio/voiceover.wav), never modified
+           on disk — clips are cut at its natural pauses. The bus applies a transparent
+           broadcast chain (rumble cut, gentle compression, level, peak ceiling) so the
+           voice sits well above the score. -->
       <hf-audio-group id="voiceover" data-label="Voiceover" data-volume="1"
         data-fx-chain="{&quot;version&quot;:1,&quot;nodes&quot;:[{&quot;type&quot;:&quot;highpass&quot;,&quot;id&quot;:&quot;n1&quot;,&quot;label&quot;:&quot;Remove Rumble&quot;,&quot;params&quot;:{&quot;frequency&quot;:100,&quot;q&quot;:0.707,&quot;poles&quot;:&quot;2&quot;}},{&quot;type&quot;:&quot;compressor&quot;,&quot;id&quot;:&quot;n2&quot;,&quot;label&quot;:&quot;Even Out Levels&quot;,&quot;params&quot;:{&quot;threshold&quot;:-28,&quot;ratio&quot;:3,&quot;attack&quot;:8,&quot;release&quot;:140,&quot;knee&quot;:6,&quot;makeup&quot;:3,&quot;mix&quot;:1}},{&quot;type&quot;:&quot;gain&quot;,&quot;id&quot;:&quot;n3&quot;,&quot;label&quot;:&quot;Voice Level&quot;,&quot;params&quot;:{&quot;gain&quot;:10}},{&quot;type&quot;:&quot;limiter&quot;,&quot;id&quot;:&quot;n4&quot;,&quot;label&quot;:&quot;Peak Ceiling&quot;,&quot;params&quot;:{&quot;limit&quot;:-2,&quot;attack&quot;:1,&quot;release&quot;:80,&quot;level_out&quot;:0}}]}"></hf-audio-group>
-      <audio id="vo-p1" data-audio-group="voiceover" src="assets/audio/voiceover.m4a" data-start="0.100" data-duration="1.484" data-media-start="0.500" data-playback-rate="1.1860" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="20"></audio>
-      <audio id="vo-p2" data-audio-group="voiceover" src="assets/audio/voiceover.m4a" data-start="1.654" data-duration="2.765" data-media-start="2.440" data-playback-rate="1.1860" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="21"></audio>
-      <audio id="vo-p3" data-audio-group="voiceover" src="assets/audio/voiceover.m4a" data-start="4.489" data-duration="5.430" data-media-start="6.080" data-playback-rate="1.1860" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="20"></audio>
-      <audio id="vo-p4" data-audio-group="voiceover" src="assets/audio/voiceover.m4a" data-start="9.989" data-duration="5.759" data-media-start="12.830" data-playback-rate="1.1860" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="21"></audio>
-      <audio id="vo-p5" data-audio-group="voiceover" src="assets/audio/voiceover.m4a" data-start="15.818" data-duration="2.572" data-media-start="20.000" data-playback-rate="1.1860" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="20"></audio>
-      <audio id="vo-p6" data-audio-group="voiceover" src="assets/audio/voiceover.m4a" data-start="18.459" data-duration="1.341" data-media-start="23.130" data-playback-rate="1.1860" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="21"></audio>
+      <audio id="vo-p1" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="0.100" data-duration="1.160" data-media-start="0.035" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="20"></audio>
+      <audio id="vo-p2" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="1.320" data-duration="2.754" data-media-start="2.150" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="21"></audio>
+      <audio id="vo-p3a" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="4.135" data-duration="2.954" data-media-start="6.325" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="20"></audio>
+      <audio id="vo-p3b" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="7.149" data-duration="2.533" data-media-start="10.275" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="21"></audio>
+      <audio id="vo-p4a" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="9.742" data-duration="0.948" data-media-start="14.285" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="20"></audio>
+      <audio id="vo-p4b" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="10.750" data-duration="1.585" data-media-start="15.775" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="21"></audio>
+      <audio id="vo-p4c" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="12.396" data-duration="2.942" data-media-start="18.000" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="20"></audio>
+      <audio id="vo-p5a" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="15.398" data-duration="0.727" data-media-start="21.610" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="21"></audio>
+      <audio id="vo-p5b" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="16.185" data-duration="1.876" data-media-start="22.560" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="20"></audio>
+      <audio id="vo-p6" data-audio-group="voiceover" src="assets/audio/voiceover.wav" data-start="18.121" data-duration="1.679" data-media-start="25.980" data-playback-rate="1.2236" data-fade-in="0.012" data-fade-out="0.025" data-volume="1" data-track-index="21"></audio>
       <!-- Score: original music bed + sound design, generated by scripts/build_audio.py -->
       <audio id="music-bed" data-audio-group="music" src="assets/audio/music-20s.wav" data-start="0" data-duration="20.000" data-volume="1" data-track-index="30"></audio>
       <audio id="sfx-stem" data-audio-group="sfx" src="assets/audio/sfx-20s.wav" data-start="0" data-duration="20.000" data-volume="1" data-track-index="31"></audio>
