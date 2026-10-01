@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <!-- SCENE 04 — THE CHALLENGE
          VO: «قبل انطلاق المؤتمر، نفتح المجال أمام المبتكرين، من خلال تحدٍّ تقني»
-         The same engineer (3/4 view, waist-up) works a holographic mission panel:
+         A floor projector beams up a holographic mission panel (centre frame):
          rotating CubeSat wireframe, code typing, telemetry, a countdown ring, a
          lock that opens on «نفتح المجال». «تحدٍّ تقني» lands as the headline.
          Enters with a HUD scan line; exits by expanding the panel (→ website). -->
@@ -14,13 +14,12 @@
       <style>
         [data-composition-id="scene-04-challenge"] { position: absolute; inset: 0; overflow: hidden; }
         #s4-all { position: absolute; inset: 0; }
-        #s4-dim { position: absolute; inset: 0; background: radial-gradient(120% 70% at 30% 55%, rgba(10, 30, 72, 0.55), rgba(2, 4, 10, 0.82) 70%); }
+        #s4-dim { position: absolute; inset: 0; background: radial-gradient(120% 70% at 50% 55%, rgba(10, 30, 72, 0.55), rgba(2, 4, 10, 0.82) 70%); }
         #s4-floor { position: absolute; left: -200px; top: 1380px; width: 1480px; height: 700px; opacity: 0.5;
           background-image: linear-gradient(rgba(63, 224, 255, 0.35) 2px, transparent 2px), linear-gradient(90deg, rgba(63, 224, 255, 0.35) 2px, transparent 2px);
           background-size: 90px 90px; transform-origin: 50% 0%; mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)); -webkit-mask-image: linear-gradient(180deg, #000, transparent); }
-        #s4-char { position: absolute; left: 430px; top: 760px; width: 672px; height: 1680px; }
-        #s4-char svg { width: 100%; height: 100%; display: block; overflow: visible; }
-        #s4-panel { position: absolute; left: 50px; top: 690px; width: 560px; height: 690px; }
+        #s4-proj { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+        #s4-panel { position: absolute; left: 260px; top: 700px; width: 560px; height: 690px; }
         #s4-glass { position: absolute; inset: 0; border-radius: 26px; overflow: hidden;
           background: linear-gradient(160deg, rgba(20, 70, 150, 0.42), rgba(6, 20, 52, 0.62) 55%, rgba(3, 10, 28, 0.72));
           border: 2px solid rgba(143, 240, 255, 0.7); box-shadow: 0 0 40px rgba(63, 224, 255, 0.35), inset 0 0 40px rgba(63, 224, 255, 0.12); }
@@ -53,7 +52,7 @@
         <div id="s4-all">
           <div id="s4-dim"></div>
           <div id="s4-floor"></div>
-          <div id="s4-char"></div>
+          <svg id="s4-proj" viewBox="0 0 1080 1920"></svg>
           <div id="s4-panel">
             <div id="s4-glass">
               <div class="hdr"><span><i id="s4-led"></i><b>MISSION 01</b></span><span id="s4-status">STANDBY</span></div>
@@ -92,9 +91,25 @@
           const q = (s) => document.querySelector(s);
           const tl = gsap.timeline({ paused: true });
 
-          // same engineer design, pointing hand for the interaction
-          q("#s4-char").innerHTML = REEL.engineer.build("s4a", { point: 1 });
-          const rig = REEL.engineer.rig(q("#s4a"), "s4a");
+          // holographic projector on the floor: emitter rings + a light beam up to the panel
+          const EM = { x: 540, y: 1690 };
+          q("#s4-proj").innerHTML = `
+            <defs>
+              <linearGradient id="s4-beam-g" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#8ff0ff" stop-opacity="0.5"/><stop offset="0.6" stop-color="#3fe0ff" stop-opacity="0.14"/><stop offset="1" stop-color="#3fe0ff" stop-opacity="0"/>
+              </linearGradient>
+              <radialGradient id="s4-core-g" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="0.35" stop-color="#8ff0ff" stop-opacity="0.6"/><stop offset="1" stop-color="#3fe0ff" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <path id="s4-beam" d="M${EM.x - 150} ${EM.y} L${EM.x - 330} 1430 L${EM.x + 330} 1430 L${EM.x + 150} ${EM.y} Z" fill="url(#s4-beam-g)" style="mix-blend-mode:screen"/>
+            <g id="s4-emit">
+              <ellipse cx="${EM.x}" cy="${EM.y}" rx="250" ry="44" fill="none" stroke="#3fe0ff" stroke-opacity="0.35" stroke-width="2"/>
+              <ellipse id="s4-dash" cx="${EM.x}" cy="${EM.y}" rx="205" ry="36" fill="none" stroke="#8ff0ff" stroke-opacity="0.8" stroke-width="3" stroke-dasharray="18 14"/>
+              <ellipse cx="${EM.x}" cy="${EM.y}" rx="150" ry="26" fill="rgba(10,40,90,0.6)" stroke="#bff6ff" stroke-width="2.5"/>
+              <ellipse id="s4-core" cx="${EM.x}" cy="${EM.y}" rx="120" ry="20" fill="url(#s4-core-g)"/>
+            </g>
+            <g id="s4-motes"></g>`;
 
           // countdown ring + lock
           q("#s4-ring").innerHTML = `
@@ -106,8 +121,8 @@
             <rect x="6" y="26" width="44" height="32" rx="7" fill="#bff6ff"/>
             <circle cx="28" cy="40" r="5" fill="#0a1838"/><rect x="26" y="40" width="4" height="10" rx="2" fill="#0a1838"/>`;
 
-          // ---- procedural layer: pose, wireframe CubeSat, bars, countdown
-          const P = { reach: 0, look: 0, lights: 1, ring: 0, unlock: 0, energy: 0 };
+          // ---- procedural layer: projector, wireframe CubeSat, bars, countdown
+          const P = { ring: 0, unlock: 0, energy: 0 };
           const V = gsap.timeline({ paused: true }); // parameter timeline, seeked per frame
           const cube = []; // 3U CubeSat: 1 x 1 x 3 box + two deployable panels
           const box = [[-1, -1, -3], [1, -1, -3], [1, 1, -3], [-1, 1, -3], [-1, -1, 3], [1, -1, 3], [1, 1, 3], [-1, 1, 3]];
@@ -121,23 +136,22 @@
             const f = 420 / (z + 14);
             return [165 + x * f * 1.15, 150 + y * f * 1.15];
           }
-          const pose = { headYaw: -0.45, headTilt: -3, bodyYaw: -0.3, armR: { sh: 18, el: -10, fs: 0.92, wr: 0 }, armL: { sh: -10, el: 18, fs: 0.9 }, legR: 2, legL: -2, lights: 1 };
           const bars = Array.from(document.querySelectorAll("#s4-bars i"));
           A.clock(tl, S.hostDuration, (t) => {
             V.totalTime(t, true);
-            // pose: from relaxed to reaching the panel (sh 18 -> 104, elbow bends up)
-            const k = P.reach;
-            pose.armR.sh = 18 + 60 * k + Math.sin(t * 1.4) * 1.2;
-            pose.armR.el = -10 + 44 * k;
-            pose.armR.fs = 0.92 - 0.14 * k;
-            pose.armR.wr = 10 * k;
-            pose.point = Math.min(1, Math.max(0, (k - 0.12) / 0.3)); // finger extends as she reaches
-            pose.headYaw = -0.25 - 0.3 * P.look;
-            pose.headTilt = -2 - 2 * P.look + Math.sin(t * 0.9) * 0.6;
-            pose.armL.sh = -10 - Math.sin(t * 1.2) * 1.2;
-            pose.lights = 0.7 + 0.3 * P.energy;
-            rig.set(pose);
-            q("#s4-char").style.transform = `translate(0px, ${(Math.sin(t * 1.5) * 2).toFixed(2)}px)`;
+            // projector: the beam breathes, the dashed ring turns, motes rise into the panel
+            const e = P.energy;
+            q("#s4-beam").setAttribute("opacity", (0.55 + 0.35 * e + Math.sin(t * 9) * 0.04).toFixed(3));
+            q("#s4-dash").setAttribute("stroke-dashoffset", (-t * 60).toFixed(1));
+            q("#s4-core").setAttribute("opacity", (0.7 + 0.3 * e + Math.sin(t * 5.3) * 0.05).toFixed(3));
+            let motes = "";
+            for (let i = 0; i < 22; i++) {
+              const ph = (t * 0.42 + i * 0.137) % 1;
+              const spread = ((i * 0.618) % 1 - 0.5) * 2;
+              const mx = EM.x + spread * (130 + ph * 190), my = EM.y - ph * (EM.y - 1440);
+              motes += `<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="${(1.6 + ((i * 0.37) % 1) * 2).toFixed(2)}" fill="#bff6ff" opacity="${(Math.sin(ph * Math.PI) * (0.45 + 0.4 * e)).toFixed(3)}"/>`;
+            }
+            q("#s4-motes").innerHTML = motes;
             // wireframe CubeSat
             const ry = t * 0.9 * T.k + 0.6, rx = -0.42;
             let dpath = "", ppath = "";
@@ -164,18 +178,18 @@
 
           // ---- parameter animation (V) on the spoken words
           V.fromTo(P, { ring: 0 }, { ring: 0.85, duration: L("naftah") - L("qabla"), ease: "none" }, L("qabla"));
-          V.fromTo(P, { reach: 0 }, { reach: 1, duration: d(0.55), ease: "power3.inOut", immediateRender: false }, L("naftah") - d(0.25));
-          V.fromTo(P, { look: 0 }, { look: 1, duration: d(0.6), ease: "sine.inOut", immediateRender: false }, L("naftah") - d(0.4));
           V.fromTo(P, { unlock: 0 }, { unlock: 1, duration: d(0.35), ease: "back.out(2)", immediateRender: false }, L("almajal"));
           V.fromTo(P, { energy: 0 }, { energy: 1, duration: d(0.8), ease: "power2.out", immediateRender: false }, L("almajal"));
-          V.fromTo(P, { reach: 1 }, { reach: 0.55, duration: d(0.7), ease: "power2.inOut", immediateRender: false }, L("tahaddin") - d(0.2));
 
           // ---- entrance: HUD scan line reveals the scene top -> bottom
           tl.fromTo("#s4-scan", { y: 0, opacity: 1 }, { y: 1920, duration: d(0.5), ease: "power2.inOut" }, cut - d(0.25));
           tl.set("#s4-scan", { opacity: 0 }, cut + d(0.26));
           tl.fromTo("#s4-all", { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: d(0.5), ease: "power2.inOut" }, cut - d(0.25));
-          tl.fromTo("#s4-char", { x: 140, opacity: 0 }, { x: 0, opacity: 1, duration: d(0.8), ease: "expo.out" }, cut);
-          tl.fromTo("#s4-panel", { opacity: 0, scale: 0.92, rotationY: 28, transformPerspective: 1500 }, { opacity: 1, scale: 1, rotationY: 12, transformPerspective: 1500, duration: d(0.85), ease: "expo.out" }, cut + d(0.1));
+          tl.fromTo("#s4-proj", { opacity: 0 }, { opacity: 1, duration: d(0.5), ease: "power2.out" }, cut);
+          tl.fromTo("#s4-emit", { scale: 0.55, svgOrigin: "540 1690" }, { scale: 1, svgOrigin: "540 1690", duration: d(0.7), ease: "expo.out" }, cut);
+          tl.fromTo("#s4-panel", { opacity: 0, scale: 0.86, y: 120, rotationX: 18, transformPerspective: 1500 }, { opacity: 1, scale: 1.12, y: 0, rotationX: 0, transformPerspective: 1500, duration: d(0.85), ease: "expo.out" }, cut + d(0.1));
+          // slow parallax yaw while it hovers (ends where the exit begins)
+          tl.fromTo("#s4-panel", { rotationY: 7 }, { rotationY: -5, duration: end - d(0.38) - (cut + d(0.1)), ease: "sine.inOut" }, cut + d(0.1));
           tl.fromTo("#s4-floor", { rotationX: 70, transformPerspective: 900, y: 120, opacity: 0 }, { rotationX: 70, transformPerspective: 900, y: 0, opacity: 0.5, duration: d(1), ease: "power2.out" }, cut);
 
           // code typing (deterministic)
@@ -184,8 +198,8 @@
           code.forEach(([sel, txt], i) => { A.type(tl, q(sel), txt, ct, 46 * T.k); ct += txt.length / (46 * T.k) + d(0.12); if (i === 3) ct = Math.max(ct, L("almubtakirin")); });
           tl.fromTo("#s4-access", { opacity: 0.35, filter: "saturate(0.2) brightness(0.6)" }, { opacity: 1, filter: "saturate(1) brightness(1)", duration: d(0.3), ease: "power2.out" }, L("almajal") + d(0.1));
 
-          // touch ripple where the fingertip meets the glass
-          tl.set("#s4-ripple", { left: 520, top: 430 }, 0);
+          // touch ripple on the lock: the panel is opened with a tap
+          tl.set("#s4-ripple", { left: 453, top: 162 }, 0);
           tl.fromTo("#s4-ripple", { scale: 0.3, opacity: 0.95 }, { scale: 4.2, opacity: 0, duration: d(0.6), ease: "power2.out", immediateRender: false }, L("naftah") + d(0.3));
           tl.fromTo("#s4-glass", { boxShadow: "0 0 40px rgba(63,224,255,0.35), inset 0 0 40px rgba(63,224,255,0.12)" }, { boxShadow: "0 0 90px rgba(63,224,255,0.75), inset 0 0 70px rgba(63,224,255,0.35)", duration: d(0.25), yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, L("naftah") + d(0.3));
 
@@ -206,8 +220,8 @@
 
           // ---- exit: the panel expands toward centre (becomes the website window)
           const x0 = end - d(0.38);
-          tl.to("#s4-panel", { x: 260, y: 40, scale: 1.55, rotationY: 0, opacity: 0, duration: d(0.5), ease: "power3.in" }, x0);
-          tl.to("#s4-char", { x: 260, opacity: 0, duration: d(0.4), ease: "power2.in" }, x0);
+          tl.to("#s4-panel", { y: 40, scale: 1.7, rotationY: 0, opacity: 0, duration: d(0.5), ease: "power3.in" }, x0);
+          tl.to("#s4-proj", { opacity: 0, duration: d(0.35), ease: "power2.in" }, x0);
           tl.to("#s4-text", { y: -60, opacity: 0, filter: "blur(10px)", duration: d(0.35), ease: "power2.in" }, x0 + d(0.04));
           tl.to(["#s4-dim", "#s4-floor"], { opacity: 0, duration: d(0.45), ease: "power1.in" }, x0);
 

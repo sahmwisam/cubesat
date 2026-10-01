@@ -75,7 +75,6 @@ function rootHtml(variant) {
     <script src="src/utils/prng.js"></script>
     <script src="src/utils/anim.js"></script>
     <script src="src/timing.js"></script>
-    <script src="src/components/engineer.js"></script>
     <script src="src/components/earth.js"></script>
     <script src="src/components/satellite.js"></script>
     <script src="src/components/iraq-flag.js"></script>

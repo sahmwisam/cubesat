@@ -23,9 +23,9 @@ specialists, media — shown only as generic silhouettes (no real people, no imi
 - No logo was supplied → typography only, no invented emblem.
 
 ## Must-haves (from the brief)
-- One consistent character: premium 2.5D stylised **Iraqi woman space engineer** (the owner asked
-  for no astronaut): navy hijab, long white engineering coat with cyan light piping, AR glasses,
-  conference badge, small Iraqi flag patch — same design in every scene, only the pose changes.
+- **No character.** The owner removed it after two iterations (astronaut, then an Iraqi woman
+  engineer). The hero visuals are the satellite (it deploys its wings and powers on in the intro,
+  glides over the sunrise at the end), the Earth with Iraq, and the holographic mission panel.
 - Palette: deep space navy, dark blue, black, electric blue, cyan, white, subtle violet; Iraqi
   colours only as small accents (flag patch, stage flag, tricolour hairline, Iraq on the globe).
 - Six short scenes (2–4 s), fast but formal pacing, smooth premium motion (ease in/out, motion

@@ -1,7 +1,9 @@
 /*
  * Satellite — a CubeSat-style bus with deployable solar wings and a dish.
  * REEL.satellite.build(id) -> SVG string, viewBox -260 -130 520 260 (centred).
- * Elements with class `${id}-blink` are status lights a timeline can pulse.
+ * Elements with class `${id}-blink` are status lights a timeline can pulse;
+ * `${id}-wingL` / `${id}-wingR` wrap each wing (hinged at x = -42 / +42) so it can
+ * be deployed with REEL.satellite.deploy(svgEl, id, k) — k 0 folded … 1 open.
  */
 (function () {
   window.REEL = window.REEL || {};
@@ -49,11 +51,9 @@
           <stop offset="0" stop-color="#8ff0ff"/><stop offset="0.5" stop-color="#1c4fa8"/><stop offset="1" stop-color="#050b1f"/>
         </radialGradient>
       </defs>
-      <!-- wing arms -->
-      <rect x="-82" y="-4" width="40" height="8" fill="#9fb3d1"/>
-      <rect x="42" y="-4" width="40" height="8" fill="#9fb3d1"/>
-      ${wing(id, -82, -1)}
-      ${wing(id, 82, 1)}
+      <!-- wing arms + deployable wings (grouped so a timeline can unfold them) -->
+      <g id="${id}-wingL"><rect x="-82" y="-4" width="40" height="8" fill="#9fb3d1"/>${wing(id, -82, -1)}</g>
+      <g id="${id}-wingR"><rect x="42" y="-4" width="40" height="8" fill="#9fb3d1"/>${wing(id, 82, 1)}</g>
       <!-- bus (3/4 view box) -->
       <path d="M-42 -40 L18 -40 L44 -58 L-16 -58 Z" fill="url(#${id}-top)"/>
       <path d="M18 -40 L44 -58 L44 52 L18 70 Z" fill="url(#${id}-side)"/>
@@ -73,5 +73,13 @@
     </svg>`;
   }
 
-  window.REEL.satellite = { build };
+  // wing deployment: k = 0 folded against the bus, 1 fully open (hinge at the bus edge)
+  function deploy(root, id, k) {
+    const s = Math.max(0.06, Math.min(1, k));
+    const L = root.querySelector("#" + id + "-wingL"), R = root.querySelector("#" + id + "-wingR");
+    if (L) L.setAttribute("transform", `translate(-42,0) scale(${s.toFixed(4)},1) translate(42,0)`);
+    if (R) R.setAttribute("transform", `translate(42,0) scale(${s.toFixed(4)},1) translate(-42,0)`);
+  }
+
+  window.REEL.satellite = { build, deploy };
 })();

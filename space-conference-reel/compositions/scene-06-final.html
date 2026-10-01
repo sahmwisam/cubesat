@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <!-- SCENE 06 — FINAL CALL
          VO: «قدّم فكرتك، واجعل الابتكار جزءًا من هذه الرحلة. نلتقي لنصنع المستقبل»
-         The engineer stands before a big Earth while the sun breaks over the limb
-         and a satellite passes; the camera keeps pushing forward. The VO's own
+         A big Earth fills the bottom of frame while the sun breaks over the limb
+         and a satellite glides in over the horizon; the camera keeps pushing. The VO's own
          closing line is the main text («المستقبل» emphasised), then the clean
          lockup: conference title → Iraqi tricolour hairline + union name, with a
-         light sweep and a glint on her glasses. -->
+         light sweep and a sun glint on the satellite's solar wing. -->
   </head>
   <body>
     <template id="scene-06-final-template">
@@ -25,8 +25,6 @@
           background: linear-gradient(90deg, transparent 0%, rgba(143, 240, 255, 0.4) 20%, #ffffff 34%, rgba(143, 240, 255, 0.4) 50%, transparent 75%); box-shadow: 0 0 22px 6px rgba(63, 224, 255, 0.35); }
         #s6-sat { position: absolute; left: 0; top: 0; width: 520px; height: 260px; margin: -130px 0 0 -260px; }
         #s6-trail { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
-        #s6-char { position: absolute; left: 330px; top: 846px; width: 432px; height: 1080px; }
-        #s6-char svg { width: 100%; height: 100%; display: block; overflow: visible; }
         #s6-glint { position: absolute; left: 0; top: 0; width: 120px; height: 120px; margin: -60px 0 0 -60px; opacity: 0; }
         #s6-text { position: absolute; left: 60px; right: 60px; top: 262px; height: 600px; text-align: center; }
         #s6-a { position: absolute; left: 0; right: 0; top: 20px; }
@@ -45,12 +43,11 @@
       <div data-composition-id="scene-06-final" data-width="1080" data-height="1920">
         <div id="s6-cam">
           <div id="s6-rays"></div>
-          <svg id="s6-trail" viewBox="0 0 1080 1920"></svg>
-          <div id="s6-sat"></div>
           <div id="s6-earth" data-layout-allow-overflow></div>
           <div id="s6-sun"></div>
           <div id="s6-flare"></div>
-          <div id="s6-char"></div>
+          <svg id="s6-trail" viewBox="0 0 1080 1920"></svg>
+          <div id="s6-sat"></div>
           <svg id="s6-glint" viewBox="-60 -60 120 120"><path d="M0 -58 L6 -6 L58 0 L6 6 L0 58 L-6 6 L-58 0 L-6 -6 Z" fill="#ffffff"/><circle r="10" fill="#ffffff"/><circle r="26" fill="#8ff0ff" opacity="0.35"/></svg>
         </div>
         <div id="s6-text">
@@ -82,42 +79,26 @@
           const q = (s) => document.querySelector(s);
           const tl = gsap.timeline({ paused: true });
 
-          q("#s6-char").innerHTML = REEL.engineer.build("s6a", {});
-          const rig = REEL.engineer.rig(q("#s6a"), "s6a");
           const earth = REEL.earth.create(q("#s6-earth"), { id: "s6e", r: 1450, dots: true });
           q("#s6-sat").innerHTML = REEL.satellite.build("s6s");
           q("#s6-hair").innerHTML = REEL.iraqFlag.hairline(160);
 
-          // ---- per-frame: pose, Earth spin, satellite pass
-          const P = { invite: 0 };
-          const V = gsap.timeline({ paused: true });
-          const pose = { headYaw: -0.12, headTilt: -4, bodyYaw: -0.05, armR: { sh: 14, el: -12, fs: 0.9 }, armL: { sh: -16, el: 14, fs: 0.92 }, legR: 3.5, legL: -2, kneeR: -2, lights: 1 };
+          // ---- per-frame: Earth spin, satellite pass
+          // the satellite glides in from the right and settles over the horizon,
+          // centred under the lockup, with a light trail
+          const SAT_SCALE = 0.74;
+          const satPath = (uu) => [1320 - 640 * (1 - Math.pow(1 - uu, 2.2)), 960 + 150 * uu - Math.sin(uu * Math.PI) * 40];
+          const satRot = (uu) => -12 + 9 * uu;
           A.clock(tl, dur, (t) => {
-            V.totalTime(t, true);
-            const k = P.invite;
-            // "submit your idea": the hand comes forward toward the viewer
-            // (forearm foreshortens) instead of swinging sideways
-            pose.armR.sh = 14 + 9 * k + Math.sin(t * 1.2) * 1.2;
-            pose.armR.el = -12 + 6 * k;
-            pose.armR.fs = 0.9 - 0.3 * k;
-            pose.armL.sh = -16 - Math.sin(t * 1.1 + 1) * 1.2;
-            pose.headTilt = -4 + Math.sin(t * 0.8) * 0.8;
-            rig.set(pose);
-            q("#s6-char").style.transform = `translate(0px, ${(Math.sin(t * 1.5) * 2.5).toFixed(2)}px)`;
             earth.update({ lambda: -30 - t * 2.2, phi: -42, gamma: -14, pulse: (t * 0.7) % 1, marker: 1 });
-            // satellite glides in from the right and settles low over the horizon,
-            // clear of the engineer and the lockup, with a light trail
             const u = t / dur;
-            const path = (uu) => [1260 - 400 * (1 - Math.pow(1 - uu, 2)), 1040 + 130 * uu - Math.sin(uu * Math.PI) * 45];
-            const [sx, sy] = path(u);
-            q("#s6-sat").style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px) scale(0.4) rotate(${(-8 + 6 * u).toFixed(2)}deg)`;
+            const [sx, sy] = satPath(u);
+            q("#s6-sat").style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px) scale(${SAT_SCALE}) rotate(${satRot(u).toFixed(2)}deg)`;
             let tr = "";
-            for (let i = 1; i <= 16; i++) { const [px, py] = path(Math.max(0, u - i * 0.014)); tr += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${(4.6 - i * 0.25).toFixed(2)}" fill="#8ff0ff" opacity="${(0.6 - i * 0.035).toFixed(3)}"/>`; }
+            for (let i = 1; i <= 16; i++) { const [px, py] = satPath(Math.max(0, u - i * 0.014)); tr += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${(6 - i * 0.3).toFixed(2)}" fill="#8ff0ff" opacity="${(0.6 - i * 0.035).toFixed(3)}"/>`; }
             q("#s6-trail").innerHTML = tr;
             document.querySelectorAll(".s6s-blink").forEach((el, i) => el.setAttribute("opacity", Math.sin(t * 6 + i * 2) > 0 ? 1 : 0.2));
           });
-          V.fromTo(P, { invite: 0 }, { invite: 1, duration: d(0.6), ease: "power2.inOut" }, L("qaddim") - d(0.1));
-          V.to(P, { invite: 0, duration: d(0.9), ease: "power2.inOut" }, L("alrihla"));
 
           // ---- entrance: out of the light point (bright, soft, slightly close) + camera push
           tl.fromTo("#s6-cam", { filter: "brightness(2.2) blur(10px)", scale: 1.14, opacity: 0 }, { filter: "brightness(1) blur(0px)", scale: 1.0, opacity: 1, duration: d(0.9), ease: "expo.out", transformOrigin: "50% 46%" }, cut - d(0.15));
@@ -127,7 +108,6 @@
           tl.fromTo("#s6-sun", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1.12, duration: dur, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
           tl.fromTo("#s6-rays", { rotation: -6, opacity: 0.2 }, { rotation: 8, opacity: 0.55, duration: dur, ease: "none" }, 0);
           tl.fromTo("#s6-flare", { scaleX: 0.5, opacity: 0.3 }, { scaleX: 1, opacity: 0.85, duration: dur * 0.6, ease: "sine.out" }, 0);
-          tl.fromTo("#s6-char", { opacity: 0 }, { opacity: 1, duration: d(0.5) }, cut);
 
           // ---- phase A: «قدّم فكرتك» / «واجعل الابتكار جزءًا من هذه الرحلة»
           const a1 = Array.from(document.querySelectorAll("#s6-a1 .w"));
@@ -156,15 +136,18 @@
           // the closing line steps up a little to make room for the lockup
           tl.to("#s6-b", { y: -18, scale: 0.9, duration: d(0.5), ease: "power2.out", transformOrigin: "50% 0%" }, lk);
 
-          // ---- final light: a glint on her glasses near the end
-          // (lens corner in viewBox coords, rotated with the head tilt about the neck pivot 300,300)
-          const G = REEL.engineer.glint, ga = (pose.headTilt * Math.PI) / 180;
-          const gx = 300 + (G.x - 300) * Math.cos(ga) - (G.y - 300) * Math.sin(ga) + pose.headYaw * 12;
-          const gy = 300 + (G.x - 300) * Math.sin(ga) + (G.y - 300) * Math.cos(ga);
-          tl.set("#s6-glint", { x: 330 + gx * 0.72, y: 846 + gy * 0.72 }, 0);
-          // sized for a lens, not a helmet
-          tl.fromTo("#s6-glint", { opacity: 0, scale: 0.1, rotation: -20 }, { opacity: 1, scale: 0.55, rotation: 25, duration: d(0.35), ease: "power2.out", immediateRender: false }, dur - d(0.95));
-          tl.to("#s6-glint", { opacity: 0, scale: 0.2, rotation: 45, duration: d(0.4), ease: "power2.in" }, dur - d(0.6));
+          // ---- final light: the sun catches the satellite's right solar wing
+          // (glint rides along with the satellite for its 0.8 s life)
+          const wing = (tt) => {
+            const uu = tt / dur, [x, y] = satPath(uu), r = (satRot(uu) * Math.PI) / 180;
+            const off = 189 * SAT_SCALE; // outer half of the right wing (x≈189 in satellite units)
+            return { x: x + Math.cos(r) * off, y: y + Math.sin(r) * off };
+          };
+          const tg = dur - d(0.9), g0 = wing(tg), g1 = wing(tg + d(0.8));
+          tl.set("#s6-glint", { x: g0.x, y: g0.y }, 0);
+          tl.fromTo("#s6-glint", { x: g0.x, y: g0.y }, { x: g1.x, y: g1.y, duration: d(0.8), ease: "none", immediateRender: false }, tg);
+          tl.fromTo("#s6-glint", { opacity: 0, scale: 0.15, rotation: -20 }, { opacity: 1, scale: 0.9, rotation: 25, duration: d(0.35), ease: "power2.out", immediateRender: false }, tg);
+          tl.to("#s6-glint", { opacity: 0, scale: 0.3, rotation: 45, duration: d(0.45), ease: "power2.in" }, tg + d(0.35));
 
           window.__timelines[ID] = tl;
         })();

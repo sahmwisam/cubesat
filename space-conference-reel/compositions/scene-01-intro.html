@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <!-- SCENE 01 — INTRO
          VO: «رحلة جديدة تبدأ من هنا. المؤتمر السنوي لتكنولوجيا الفضاء والأقمار الاصطناعية»
-         Dark space → the engineer (an Iraqi woman space engineer) rises as a rim-lit silhouette → lights on at «المؤتمر»
+         Dark space → a satellite rises as a rim-lit silhouette → deploys its solar wings and powers on at «المؤتمر»
          → word-synced cinematic title → union signature → push-through exit. -->
   </head>
   <body>
@@ -16,11 +16,11 @@
           background: radial-gradient(closest-side, rgba(255, 255, 255, 0.85), rgba(160, 240, 255, 0.45) 22%, rgba(46, 123, 255, 0.16) 55%, transparent 100%); mix-blend-mode: screen; }
         #s1-earth { position: absolute; left: -1191px; top: 1222px; }
         #s1-orbit-back, #s1-orbit-front { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
-        #s1-char { position: absolute; left: 270px; top: 800px; width: 540px; height: 1350px; }
-        #s1-char-float { position: absolute; inset: 0; }
-        #s1-char svg { width: 100%; height: 100%; display: block; overflow: visible; }
-        #s1-char-shadow { position: absolute; left: 50px; top: 150px; width: 440px; height: 900px; border-radius: 50%;
-          background: radial-gradient(closest-side, rgba(63, 224, 255, 0.22), rgba(46, 123, 255, 0.08) 60%, transparent 100%); }
+        #s1-hero { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+        #s1-sat-glow { position: absolute; left: 120px; top: 840px; width: 840px; height: 560px; border-radius: 50%;
+          background: radial-gradient(closest-side, rgba(63, 224, 255, 0.26), rgba(46, 123, 255, 0.1) 55%, transparent 100%); }
+        #s1-sat { position: absolute; left: 540px; top: 1110px; width: 520px; height: 260px; margin: -130px 0 0 -260px; }
+        #s1-sat svg { width: 100%; height: 100%; display: block; overflow: visible; }
         #s1-text { position: absolute; left: 70px; right: 70px; top: 270px; height: 560px; display: flex; flex-direction: column; align-items: center; }
         #s1-kicker { position: absolute; left: 0; right: 0; top: 150px; text-align: center; font-size: 74px; color: var(--white); }
         #s1-kicker .w, #s1-title .w { display: inline-block; }
@@ -36,7 +36,7 @@
           <div id="s1-sun"></div>
           <div id="s1-earth" data-layout-allow-overflow></div>
           <svg id="s1-orbit-back" viewBox="0 0 1080 1920"></svg>
-          <div id="s1-char"><div id="s1-char-float"><div id="s1-char-shadow"></div><div id="s1-char-svg"></div></div></div>
+          <div id="s1-hero"><div id="s1-sat-glow"></div><div id="s1-sat"></div></div>
           <svg id="s1-orbit-front" viewBox="0 0 1080 1920"></svg>
           <div id="s1-text">
             <div id="s1-kicker" class="ar glow-text">
@@ -67,13 +67,14 @@
           const A = REEL.anim;
           const q = (s) => document.querySelector(s);
 
-          // --- build components (same character design as every scene)
-          q("#s1-char-svg").innerHTML = REEL.engineer.build("s1a", {});
-          const rig = REEL.engineer.rig(q("#s1a"), "s1a");
+          // --- build components: the hero satellite (wings folded until «المؤتمر»)
+          q("#s1-sat").innerHTML = REEL.satellite.build("s1s");
+          const satEl = q("#s1s");
+          const blinks = Array.from(document.querySelectorAll(".s1s-blink"));
           const earth = REEL.earth.create(q("#s1-earth"), { id: "s1e", r: 1500, dots: true });
           q("#s1-hair").innerHTML = REEL.iraqFlag.hairline(150);
 
-          // orbit ring around the engineer: back half behind, front half in front
+          // orbit ring below the satellite: back half behind it, front half in front
           const OC = { x: 540, y: 1430, rx: 500, ry: 128, tilt: -9 };
           const ell = (from, to) => {
             const pts = [];
@@ -90,22 +91,18 @@
               <path d="${ell(0, Math.PI)}" stroke="#3fe0ff" stroke-opacity="0.55" stroke-width="2.4" fill="none"/>
               <circle id="s1-sat-f" r="6" fill="#ffffff"/><circle id="s1-sat-fg" r="16" fill="#3fe0ff" opacity="0.25"/></g>`;
 
-          // --- procedural layer: float, earth rotation, orbiting light
-          const pose = { headTilt: -3, headYaw: 0.08, bodyYaw: 0.06, armR: { sh: 15, el: -16, fs: 0.86 }, armL: { sh: -6, el: 5, fs: 0.97 }, legR: 4, legL: -1.5, kneeR: -3, kneeL: 0.5, lights: 0 };
+          // --- procedural layer: satellite drift, earth rotation, orbiting light
           // procedural parameters live on their own timeline (V) which the
           // per-frame clock seeks explicitly -> independent of render order
-          const P = { lights: 0, look: 0 };
+          const P = { lights: 0, deploy: 0 };
           const V = gsap.timeline({ paused: true });
           A.clock(tl, S.hostDuration, (t) => {
             V.totalTime(t, true);
-            const fy = Math.sin(t * 1.5) * 2.5, fr = Math.sin(t * 1.1 + 0.6) * 0.2; // idle breathing sway
-            q("#s1-char-float").style.transform = `translate(0px, ${fy.toFixed(2)}px) rotate(${fr.toFixed(3)}deg)`;
-            pose.lights = P.lights;
-            pose.headTilt = -2 - 3 * P.look;
-            pose.headNod = -0.6 * P.look;
-            pose.armR.sh = 15 + Math.sin(t * 1.1) * 1.4;
-            pose.armL.sh = -6 - Math.sin(t * 1.1 + 0.8) * 1.0;
-            rig.set(pose);
+            // zero-g drift and a slow roll; wings unfold at «المؤتمر»
+            const fy = Math.sin(t * 1.2) * 8, rot = -9 + t * 0.9 + Math.sin(t * 0.9) * 0.6;
+            q("#s1-sat").style.transform = `translate(0px, ${fy.toFixed(2)}px) rotate(${rot.toFixed(3)}deg) scale(1.32)`;
+            REEL.satellite.deploy(satEl, "s1s", P.deploy);
+            blinks.forEach((el, i) => el.setAttribute("opacity", P.lights > 0.5 ? (Math.sin(t * 7 + i * 2) > 0 ? 1 : 0.25) : 0.15));
             earth.update({ lambda: -36 - t * 1.6, phi: -16, gamma: -6, pulse: (t * 0.7) % 1, marker: 1 });
             const a = 0.6 + t * 0.9; // orbit angle
             const x = OC.rx * Math.cos(a), y = OC.ry * Math.sin(a);
@@ -123,7 +120,7 @@
           // --- opening: earth glow + silhouette rising
           tl.fromTo("#s1-earth", { opacity: 0, y: 140 }, { opacity: 1, y: 0, duration: d(2.2), ease: "power2.out" }, 0);
           tl.fromTo("#s1-sun", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: d(2.6), ease: "power2.out" }, d(0.1));
-          tl.fromTo("#s1-char", { y: 190, opacity: 0, filter: "brightness(0.08) saturate(0.6)" },
+          tl.fromTo("#s1-hero", { y: 220, opacity: 0, filter: "brightness(0.08) saturate(0.6)" },
             { y: 0, opacity: 1, filter: "brightness(0.22) saturate(0.7)", duration: d(2.1), ease: "power3.out" }, d(0.05));
           tl.fromTo(["#s1-orbit-back", "#s1-orbit-front"], { opacity: 0 }, { opacity: 1, duration: d(1.2), ease: "sine.out" }, d(0.6));
 
@@ -132,12 +129,12 @@
           A.wordsIn(tl, kw, ["rihla", "jadida", "tabda", "min_huna"].map((c) => L(c) - d(0.06)), { y: 28, blur: 12, duration: d(0.5) });
           A.out(tl, "#s1-kicker", L("almutamar") - d(0.3), { y: -40, blur: 12, duration: d(0.28) });
 
-          // --- lights on at «المؤتمر»
+          // --- «المؤتمر»: the satellite deploys its solar wings and powers on
           const on = L("almutamar");
-          tl.to("#s1-char", { filter: "brightness(1) saturate(1)", duration: d(0.75), ease: "power2.out" }, on - d(0.05));
-          V.fromTo(P, { lights: 0 }, { lights: 1, duration: d(0.6), ease: "steps(6)" }, on);
-          V.fromTo(P, { look: 0 }, { look: 1, duration: d(1.2), ease: "sine.inOut", immediateRender: false }, L("alfada") - d(0.3));
-          tl.fromTo("#s1-char-shadow", { opacity: 0 }, { opacity: 1, duration: d(0.8) }, on);
+          tl.to("#s1-hero", { filter: "brightness(1) saturate(1)", duration: d(0.75), ease: "power2.out" }, on - d(0.05));
+          V.fromTo(P, { deploy: 0 }, { deploy: 1, duration: d(0.9), ease: "expo.out" }, on - d(0.05));
+          V.fromTo(P, { lights: 0 }, { lights: 1, duration: d(0.6), ease: "steps(6)", immediateRender: false }, on);
+          tl.fromTo("#s1-sat-glow", { opacity: 0 }, { opacity: 1, duration: d(0.8) }, on);
 
           // --- title, word-synced
           const t1 = Array.from(document.querySelectorAll("#s1-l1 .w"));
@@ -164,7 +161,7 @@
           // --- push-through exit into scene 02
           const x0 = end - d(0.4);
           tl.to("#s1-text", { scale: 1.75, opacity: 0, filter: "blur(16px)", duration: d(0.55), ease: "power2.in", transformOrigin: "50% 40%" }, x0);
-          tl.to("#s1-char", { scale: 1.45, y: 260, opacity: 0, duration: d(0.55), ease: "power2.in", transformOrigin: "50% 30%" }, x0);
+          tl.to("#s1-hero", { scale: 1.5, y: 240, opacity: 0, duration: d(0.55), ease: "power2.in", transformOrigin: "50% 58%" }, x0);
           tl.to(["#s1-earth", "#s1-sun"], { y: 420, scale: 1.2, opacity: 0, duration: d(0.6), ease: "power2.in" }, x0);
           tl.to(["#s1-orbit-back", "#s1-orbit-front"], { opacity: 0, scale: 1.5, duration: d(0.45), ease: "power2.in", transformOrigin: "50% 65%" }, x0);
 
